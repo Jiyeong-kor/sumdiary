@@ -1,17 +1,56 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
-    alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.sqldelight)
 }
 
 kotlin {
-    androidTarget()
+    androidTarget {
+        compilations.all {
+            compileTaskProvider.configure {
+                compilerOptions {
+                    jvmTarget.set(JvmTarget.JVM_17)
+                }
+            }
+        }
+    }
     iosX64()
     iosArm64()
     iosSimulatorArm64()
 
     sourceSets {
-        val commonMain by getting
+        val commonMain by getting {
+            dependencies {
+                implementation(project(":shared:domain-summary"))
+                implementation(project(":shared:domain-diary"))
+                implementation(libs.datetime)
+                implementation(libs.sqldelight.runtime)
+                implementation(libs.sqldelight.coroutines)
+                implementation(libs.coroutines.core)
+            }
+        }
+        val androidMain by getting {
+            dependencies {
+                implementation(libs.sqldelight.driver.android)
+            }
+        }
+        val iosMain by getting {
+            dependencies {
+                implementation(libs.sqldelight.driver.native)
+            }
+        }
         val commonTest by getting
+    }
+}
+
+sqldelight {
+    databases {
+        create("SummaryDatabase") {
+            packageName.set("com.jeong.sumdiary.data.summary.db")
+            schemaOutputDirectory.set(file("sqldelight"))
+        }
     }
 }
 

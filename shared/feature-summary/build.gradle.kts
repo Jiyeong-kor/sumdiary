@@ -1,16 +1,33 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
-    alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.multiplatform)
 }
 
 kotlin {
-    androidTarget()
+    androidTarget {
+        compilations.all {
+            compileTaskProvider.configure {
+                compilerOptions {
+                    jvmTarget.set(JvmTarget.JVM_17)
+                }
+            }
+        }
+    }
     iosX64()
     iosArm64()
     iosSimulatorArm64()
 
     sourceSets {
-        val commonMain by getting
+        val commonMain by getting {
+            dependencies {
+                implementation(libs.coroutines.core)
+                implementation(project(":shared:core-util"))
+                implementation(project(":shared:domain-diary"))
+                implementation(project(":shared:domain-summary"))
+            }
+        }
         val commonTest by getting
     }
 }

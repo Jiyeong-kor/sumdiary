@@ -1,0 +1,20 @@
+CREATE TABLE Summary (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    type TEXT NOT NULL,
+    periodStart TEXT NOT NULL,
+    periodEnd TEXT NOT NULL,
+    summaryText TEXT NOT NULL,
+    UNIQUE(periodStart, periodEnd)
+);
+
+selectByPeriod:
+SELECT * FROM Summary
+WHERE periodStart = ? AND periodEnd = ?
+LIMIT 1;
+
+upsert:
+INSERT INTO Summary(type, periodStart, periodEnd, summaryText)
+VALUES (?, ?, ?, ?)
+ON CONFLICT(periodStart, periodEnd) DO UPDATE SET
+    type = excluded.type,
+    summaryText = excluded.summaryText;

@@ -11,6 +11,7 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -20,23 +21,19 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "sumdiary"
+
 include(
     ":app:android",
     ":app:ios",
-
-    ":shared:core:model",
-    ":shared:core:util",
-    ":shared:core:designsystem",
-
-    ":shared:domain:diary",
-    ":shared:domain:auth",
-    ":shared:domain:summary",
-
-    ":shared:data:diary",
-    ":shared:data:auth",
-    ":shared:data:summary",
-
-    ":shared:feature:diary",
-    ":shared:feature:auth",
-    ":shared:feature:summary"
+    ":shared:core-model",
+    ":shared:core-util",
+    ":shared:core-designsystem",
+    ":shared:domain-diary",
+    ":shared:domain-auth",
+    ":shared:domain-summary",
+    ":shared:data-diary",
+    ":shared:data-auth",
+    ":shared:data-summary",
+    ":shared:feature-entry",
+    ":shared:feature-summary"
 )
