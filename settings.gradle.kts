@@ -20,5 +20,23 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "sumdiary"
-include(":app")
-include(":shared")
+include(
+    ":app:android",
+    ":app:ios",
+
+    ":shared:core:model",
+    ":shared:core:util",
+    ":shared:core:designsystem",
+
+    ":shared:domain:diary",
+    ":shared:domain:auth",
+    ":shared:domain:summary",
+
+    ":shared:data:diary",
+    ":shared:data:auth",
+    ":shared:data:summary",
+
+    ":shared:feature:diary",
+    ":shared:feature:auth",
+    ":shared:feature:summary"
+)
