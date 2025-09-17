@@ -35,11 +35,19 @@ kotlin {
                 implementation(libs.sqldelight.driver.android)
             }
         }
-        val iosMain by getting {
+        val iosX64Main by getting
+        val iosArm64Main by getting
+        val iosSimulatorArm64Main by getting
+
+        val iosMain by creating {
+            dependsOn(commonMain)
             dependencies {
                 implementation(libs.sqldelight.driver.native)
             }
         }
+        iosX64Main.dependsOn(iosMain)
+        iosArm64Main.dependsOn(iosMain)
+        iosSimulatorArm64Main.dependsOn(iosMain)
         val commonTest by getting
     }
 }
