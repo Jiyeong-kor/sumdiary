@@ -1,0 +1,20 @@
+CREATE TABLE Diary (
+    id TEXT NOT NULL PRIMARY KEY,
+    date TEXT NOT NULL,
+    time TEXT NOT NULL,
+    content TEXT NOT NULL
+);
+
+getAllBetween:
+SELECT * FROM Diary
+WHERE date >= ? AND date <= ?
+ORDER BY date ASC, time ASC;
+
+getByDate:
+SELECT * FROM Diary
+WHERE date = ?
+ORDER BY time ASC;
+
+upsert:
+INSERT OR REPLACE INTO Diary(id, date, time, content)
+VALUES (?, ?, ?, ?);

@@ -1,12 +1,13 @@
-﻿<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
     <application
-        android:name=".SumDiaryApp"
-        android:label="SumDiary"
-        android:icon="@android:mipmap/sym_def_app_icon"
+        android:name=".SumDiaryApplication"
         android:allowBackup="true"
-        android:supportsRtl="true">
+        android:label="SumDiary"
+        android:theme="@style/Theme.Material3.DayNight.NoActionBar">
         <activity
-            android:name="com.jeong.sumdiary.android.MainActivity"
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
