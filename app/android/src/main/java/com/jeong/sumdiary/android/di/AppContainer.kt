@@ -9,6 +9,7 @@ import com.jeong.sumdiary.data.summary.PlaceholderSummarizerEngine
 import com.jeong.sumdiary.data.summary.SummaryRepositoryImpl
 import com.jeong.sumdiary.data.summary.db.SummaryDatabase
 import com.jeong.sumdiary.domain.summary.usecase.GenerateDailySummary
+import com.jeong.sumdiary.domain.summary.usecase.GenerateWeeklySummary
 import com.jeong.sumdiary.feature.entry.EntryViewModel
 import com.jeong.sumdiary.feature.summary.SummaryViewModel
 

@@ -10,8 +10,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val container = (application as SumDiaryApplication).container
-        SumDiaryTheme {
-            SumDiaryScreen(container)
+        setContent {
+            SumDiaryTheme {
+                SumDiaryScreen(container)
+            }
         }
     }
 }

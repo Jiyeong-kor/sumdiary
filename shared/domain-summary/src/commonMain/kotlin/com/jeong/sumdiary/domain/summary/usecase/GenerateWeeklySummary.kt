@@ -7,6 +7,7 @@ import com.jeong.sumdiary.domain.summary.SummaryRepository
 import com.jeong.sumdiary.domain.summary.SummaryType
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.dayOfWeek
 import kotlinx.datetime.isoDayNumber
 
 class GenerateWeeklySummary(
