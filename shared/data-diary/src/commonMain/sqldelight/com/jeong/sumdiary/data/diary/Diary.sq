@@ -1,0 +1,24 @@
+CREATE TABLE  (
+
+);CREATE TABLE Diary (
+      id TEXT NOT NULL PRIMARY KEY,
+      date TEXT NOT NULL,
+      time TEXT NOT NULL,
+      content TEXT NOT NULL
+  );
+
+  insertDiary:
+  INSERT OR REPLACE INTO Diary(id, date, time, content)
+  VALUES (?, ?, ?, ?);
+
+  selectByDate:
+  SELECT *
+  FROM Diary
+  WHERE date = ?
+  ORDER BY time ASC;
+
+  selectByRange:
+  SELECT *
+  FROM Diary
+  WHERE date BETWEEN ? AND ?
+  ORDER BY date ASC, time ASC;

@@ -25,6 +25,7 @@ kotlin {
                 implementation(libs.coroutines.core)
                 implementation(libs.datetime)
                 implementation(libs.napier)
+                implementation(libs.ktor.client.core)
             }
         }
         val commonTest by getting

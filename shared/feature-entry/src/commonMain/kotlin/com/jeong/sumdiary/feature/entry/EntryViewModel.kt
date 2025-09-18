@@ -1,77 +1,69 @@
 package com.jeong.sumdiary.feature.entry
 
-import com.jeong.sumdiary.core.util.DefaultDispatcherProvider
-import com.jeong.sumdiary.core.util.DispatcherProvider
-import com.jeong.sumdiary.core.util.IdGenerator
-import com.jeong.sumdiary.core.util.Logger
-import com.jeong.sumdiary.domain.diary.model.DiaryEntry
-import com.jeong.sumdiary.domain.diary.repository.DiaryRepository
+import com.jeong.sumdiary.core.util.time.TimeProvider
+import com.jeong.sumdiary.domain.diary.DiaryEntry
+import com.jeong.sumdiary.domain.diary.DiaryRepository
+import kotlin.random.Random
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 
 class EntryViewModel(
     private val diaryRepository: DiaryRepository,
-    private val dispatcherProvider: DispatcherProvider = DefaultDispatcherProvider
+    private val scope: CoroutineScope =
+        CoroutineScope(SupervisorJob() + Dispatchers.Default)
 ) {
-    private val scope = CoroutineScope(dispatcherProvider.default + SupervisorJob())
-    private val _state = MutableStateFlow(createInitialState())
-    val state: StateFlow<EntryState> = _state.asStateFlow()
-
-    fun handle(intent: EntryIntent) {
+    private val _state = MutableStateFlow(
+        EntryState.initial(
+            date = TimeProvider.today(TimeZone.currentSystemDefault()),
+            time = TimeProvider.now(TimeZone.currentSystemDefault()).time,
+        ),
+    )
+    val state: StateFlow<EntryState> = _state
+    fun onIntent(intent: EntryIntent) {
         when (intent) {
-            is EntryIntent.Edit -> _state.update { it.copy(text = intent.text) }
-            EntryIntent.Save -> saveEntry()
+            is EntryIntent.Edit -> onEdit(intent)
+            EntryIntent.Save -> onSave()
         }
     }
 
-    fun dispose() {
-        scope.cancel()
-    }
-
-    private fun createInitialState(): EntryState {
-        val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-        return EntryState(
-            text = "",
-            date = now.date,
-            time = now.time,
-            saving = false,
+    private fun onEdit(intent: EntryIntent.Edit) {
+        _state.value = EntryState(
+            text = intent.text,
+            date = intent.date,
+            time = intent.time,
+            saving = false
         )
     }
 
-    private fun saveEntry() {
+    private fun onSave() {
         val current = _state.value
-        if (current.saving || current.text.isBlank()) {
-            return
+        if (current.saving) return
+        _state.value = current.copy(saving = true)
+        scope.launch {
+            val entry = DiaryEntry(
+                id = generateEntryId(current.date, current.time),
+                date = current.date,
+                time = current.time,
+                content = current.text,
+            )
+            runCatching { diaryRepository.upsert(entry) }
+            _state.value = _state.value.copy(saving = false)
         }
-        _state.update { it.copy(saving = true) }
-        scope.launch(dispatcherProvider.io) {
-            runCatching {
-                diaryRepository.upsert(
-                    DiaryEntry(
-                        id = IdGenerator.create(),
-                        date = current.date,
-                        time = current.time,
-                        content = current.text,
-                    ),
-                )
-            }.onFailure { error ->
-                Logger.e("일기 저장 실패", error)
-            }
-            _state.update {
-                it.copy(
-                    text = "",
-                    saving = false,
-                )
-            }
-        }
+    }
+
+    private fun generateEntryId(date: LocalDate, time: LocalTime): String {
+        return "${'$'}date-${'$'}time-${Random.nextInt(0, Int.MAX_VALUE)}"
+    }
+
+    fun clear() {
+        scope.cancel()
     }
 }

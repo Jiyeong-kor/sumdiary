@@ -14,22 +14,17 @@
             <option value="$PROJECT_DIR$/app/android" />
             <option value="$PROJECT_DIR$/app/ios" />
             <option value="$PROJECT_DIR$/shared" />
-            <option value="$PROJECT_DIR$/shared/core" />
-            <option value="$PROJECT_DIR$/shared/core/designsystem" />
-            <option value="$PROJECT_DIR$/shared/core/model" />
-            <option value="$PROJECT_DIR$/shared/core/util" />
-            <option value="$PROJECT_DIR$/shared/data" />
-            <option value="$PROJECT_DIR$/shared/data/auth" />
-            <option value="$PROJECT_DIR$/shared/data/diary" />
-            <option value="$PROJECT_DIR$/shared/data/summary" />
-            <option value="$PROJECT_DIR$/shared/domain" />
-            <option value="$PROJECT_DIR$/shared/domain/auth" />
-            <option value="$PROJECT_DIR$/shared/domain/diary" />
-            <option value="$PROJECT_DIR$/shared/domain/summary" />
-            <option value="$PROJECT_DIR$/shared/feature" />
-            <option value="$PROJECT_DIR$/shared/feature/auth" />
-            <option value="$PROJECT_DIR$/shared/feature/diary" />
-            <option value="$PROJECT_DIR$/shared/feature/summary" />
+            <option value="$PROJECT_DIR$/shared/core-designsystem" />
+            <option value="$PROJECT_DIR$/shared/core-model" />
+            <option value="$PROJECT_DIR$/shared/core-util" />
+            <option value="$PROJECT_DIR$/shared/data-auth" />
+            <option value="$PROJECT_DIR$/shared/data-diary" />
+            <option value="$PROJECT_DIR$/shared/data-summary" />
+            <option value="$PROJECT_DIR$/shared/domain-auth" />
+            <option value="$PROJECT_DIR$/shared/domain-diary" />
+            <option value="$PROJECT_DIR$/shared/domain-summary" />
+            <option value="$PROJECT_DIR$/shared/feature-entry" />
+            <option value="$PROJECT_DIR$/shared/feature-summary" />
           </set>
         </option>
       </GradleProjectSettings>

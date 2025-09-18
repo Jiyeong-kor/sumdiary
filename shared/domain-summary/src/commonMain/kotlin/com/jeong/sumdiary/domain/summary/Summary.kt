@@ -9,9 +9,3 @@ data class Summary(
     val text: String,
     val emotions: List<String>,
 )
-
-enum class SummaryType {
-    DAILY,
-    WEEKLY,
-    MONTHLY
-}

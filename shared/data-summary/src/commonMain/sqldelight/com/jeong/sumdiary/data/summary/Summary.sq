@@ -10,8 +10,8 @@ insertSummary:
 INSERT INTO Summary(type, periodStart, periodEnd, summaryText)
 VALUES (?, ?, ?, ?);
 
-getSummary:
-SELECT * FROM Summary
+selectSummaryByPeriod:
+SELECT *
+FROM Summary
 WHERE periodStart = ? AND periodEnd = ?
-ORDER BY id DESC
 LIMIT 1;

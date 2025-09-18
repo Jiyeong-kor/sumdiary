@@ -2,10 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <application
-        android:name=".SumDiaryApplication"
-        android:allowBackup="true"
-        android:label="SumDiary"
-        android:theme="@style/Theme.Material3.DayNight.NoActionBar">
+        android:name=".MainApplication"
+        android:label="SumDiary">
         <activity
             android:name=".MainActivity"
             android:exported="true">
