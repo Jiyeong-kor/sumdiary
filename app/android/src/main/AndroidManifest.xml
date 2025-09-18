@@ -2,10 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <application
-        android:name=".MainApplication"
-        android:label="SumDiary">
+        android:name="com.jeong.sumdiary.android.SumDiaryApplication"
+        android:allowBackup="false"
+        android:label="SumDiary"
+        android:icon="@mipmap/ic_launcher">
         <activity
-            android:name=".MainActivity"
+            android:name="com.jeong.sumdiary.android.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

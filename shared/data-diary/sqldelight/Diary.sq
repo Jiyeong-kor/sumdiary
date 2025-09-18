@@ -1,0 +1,24 @@
+CREATE TABLE Diary (
+    id TEXT NOT NULL PRIMARY KEY,
+    date TEXT NOT NULL,
+    time TEXT NOT NULL,
+    content TEXT NOT NULL
+);
+
+upsertDiary:
+INSERT INTO Diary(id, date, time, content)
+VALUES (:id, :date, :time, :content)
+ON CONFLICT(id) DO UPDATE SET
+    date = excluded.date,
+    time = excluded.time,
+    content = excluded.content;
+
+selectByDate:
+SELECT id, date, time, content FROM Diary
+WHERE date = :targetDate
+ORDER BY time ASC;
+
+selectRange:
+SELECT id, date, time, content FROM Diary
+WHERE date BETWEEN :startDate AND :endDate
+ORDER BY date ASC, time ASC;

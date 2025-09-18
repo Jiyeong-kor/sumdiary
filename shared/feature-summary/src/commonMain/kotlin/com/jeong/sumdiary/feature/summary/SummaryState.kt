@@ -9,11 +9,11 @@ data class SummaryState(
     val loading: Boolean
 ) {
     companion object {
-        fun idle(today: LocalDate): SummaryState = SummaryState(
-            period = today to today,
-            text = "",
+        fun initial(date: LocalDate): SummaryState = SummaryState(
+            period = date to date,
+            text = "요약을 불러오세요.",
             emotions = emptyList(),
-            loading = false,
+            loading = false
         )
     }
 }

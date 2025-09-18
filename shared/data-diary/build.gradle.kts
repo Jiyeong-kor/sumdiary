@@ -56,7 +56,8 @@ sqldelight {
     databases {
         create("DiaryDatabase") {
             packageName.set("com.jeong.sumdiary.data.diary.db")
-            schemaOutputDirectory.set(file("sqldelight"))
+            srcDirs.from("sqldelight")
+            schemaOutputDirectory.set(file("build/generated/sqldelight/diary"))
         }
     }
 }

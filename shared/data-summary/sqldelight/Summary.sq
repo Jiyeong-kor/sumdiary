@@ -1,0 +1,16 @@
+CREATE TABLE Summary (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    type TEXT NOT NULL,
+    periodStart TEXT NOT NULL,
+    periodEnd TEXT NOT NULL,
+    summaryText TEXT NOT NULL
+);
+
+insertSummary:
+INSERT INTO Summary(type, periodStart, periodEnd, summaryText)
+VALUES (?, ?, ?, ?);
+
+selectSummary:
+SELECT id, type, periodStart, periodEnd, summaryText FROM Summary
+WHERE periodStart = ? AND periodEnd = ?
+LIMIT 1;

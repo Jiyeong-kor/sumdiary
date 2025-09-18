@@ -1,21 +1,17 @@
 package com.jeong.sumdiary.data.summary
 
+import kotlinx.coroutines.delay
+
 class PlaceholderSummarizerEngine : SummarizerEngine {
     override suspend fun run(texts: List<String>): String {
-        if (texts.isEmpty()) {
-            return "요약할 일기가 없습니다."
+        delay(50)
+        if (texts.isEmpty()) return "오늘은 기록이 없습니다."
+        val sentences = texts.mapNotNull { text ->
+            text.split('.')
+                .map { it.trim() }
+                .firstOrNull { it.isNotEmpty() }
         }
-        val summary = texts.mapNotNull { text ->
-            text.split(Regex("(?<=[.!?])\\s+"))
-                .firstOrNull()
-                ?.trim()
-                ?.takeIf { it.isNotEmpty() }
-        }.joinToString(separator = " ")
-        val normalized = summary.ifBlank { texts.joinToString(separator = " ") { it.trim() } }
-        return if (normalized.length <= 200) {
-            normalized
-        } else {
-            normalized.take(200) + "…"
-        }
+        val combined = sentences.joinToString(separator = ". ")
+        return combined.take(200)
     }
 }
