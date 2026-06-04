@@ -18,3 +18,7 @@ selectRange:
 SELECT id, date, time, content FROM Diary
 WHERE date BETWEEN :startDate AND :endDate
 ORDER BY date ASC, time ASC;
+
+deleteById:
+DELETE FROM Diary
+WHERE id = :id;

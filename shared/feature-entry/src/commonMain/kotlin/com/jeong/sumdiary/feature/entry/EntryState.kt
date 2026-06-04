@@ -12,6 +12,7 @@ data class EntryState(
     val text: String,
     val date: LocalDate,
     val time: LocalTime,
+    val editingEntryId: String?,
     val entries: List<DiaryEntry>,
     val saving: Boolean
 ) {
@@ -23,6 +24,7 @@ data class EntryState(
                 text = "",
                 date = now.date,
                 time = now.time,
+                editingEntryId = null,
                 entries = emptyList(),
                 saving = false
             )

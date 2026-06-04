@@ -38,6 +38,9 @@ class EntryViewModel(
                 observeEntriesFor(intent.date)
             }
             is EntryIntent.ChangeTime -> _state.value = _state.value.copy(time = intent.time)
+            is EntryIntent.StartEdit -> startEdit(intent.entry)
+            is EntryIntent.Delete -> delete(intent.id)
+            EntryIntent.CancelEdit -> clearEditor()
             EntryIntent.Save -> save()
         }
     }
@@ -50,7 +53,7 @@ class EntryViewModel(
             _state.value = _state.value.copy(saving = true)
             repository.upsert(
                 DiaryEntry(
-                    id = generateEntryId(current),
+                    id = current.editingEntryId ?: generateEntryId(current),
                     date = current.date,
                     time = current.time,
                     content = current.text
@@ -60,9 +63,40 @@ class EntryViewModel(
             _state.value = _state.value.copy(
                 text = "",
                 time = now.time,
+                editingEntryId = null,
                 saving = false
             )
         }
+    }
+
+    private fun startEdit(entry: DiaryEntry) {
+        _state.value = _state.value.copy(
+            text = entry.content,
+            date = entry.date,
+            time = entry.time,
+            editingEntryId = entry.id
+        )
+    }
+
+    private fun delete(id: String) {
+        scope.launch {
+            repository.deleteById(id)
+            if (_state.value.editingEntryId == id) {
+                clearEditor()
+            }
+        }
+    }
+
+    @OptIn(ExperimentalTime::class)
+    private fun clearEditor() {
+        val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+        _state.value = _state.value.copy(
+            text = "",
+            date = now.date,
+            time = now.time,
+            editingEntryId = null,
+            saving = false
+        )
     }
 
     private fun generateEntryId(state: EntryState): String = buildString {

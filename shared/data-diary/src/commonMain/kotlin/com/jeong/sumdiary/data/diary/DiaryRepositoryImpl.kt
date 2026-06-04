@@ -31,6 +31,12 @@ class DiaryRepositoryImpl(
         }
     }
 
+    override suspend fun deleteById(id: String) {
+        withContext(dispatcher) {
+            queries.deleteById(id)
+        }
+    }
+
     override suspend fun getByDate(date: LocalDate): List<DiaryEntry> = withContext(dispatcher) {
         queries.selectByDate(targetDate = date.toString())
             .executeAsList()
