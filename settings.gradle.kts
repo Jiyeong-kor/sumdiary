@@ -31,9 +31,11 @@ include(
     ":shared:domain-diary",
     ":shared:domain-auth",
     ":shared:domain-summary",
+    ":shared:domain-backup",
     ":shared:data-diary",
     ":shared:data-auth",
     ":shared:data-summary",
+    ":shared:data-backup",
     ":shared:feature-entry",
     ":shared:feature-summary"
 )
