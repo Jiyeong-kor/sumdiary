@@ -88,6 +88,7 @@ dependencies {
     implementation(libs.coroutines.android)
     implementation(libs.datetime)
     implementation(libs.hilt.android)
+    implementation(libs.play.services.auth)
     ksp(libs.hilt.compiler)
     implementation(libs.sqldelight.driver.android)
     implementation(project(":shared:core-designsystem"))
