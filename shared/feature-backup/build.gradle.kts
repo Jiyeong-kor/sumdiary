@@ -22,9 +22,8 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api(project(":shared:domain-diary"))
-                api(project(":shared:domain-summary"))
                 implementation(libs.coroutines.core)
+                implementation(project(":shared:domain-backup"))
             }
         }
         val commonTest by getting
@@ -32,7 +31,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.jeong.sumdiary.domain.backup"
+    namespace = "com.jeong.sumdiary.feature.backup"
     compileSdk = 36
     defaultConfig {
         minSdk = 24

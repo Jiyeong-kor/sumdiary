@@ -37,5 +37,6 @@ include(
     ":shared:data-summary",
     ":shared:data-backup",
     ":shared:feature-entry",
-    ":shared:feature-summary"
+    ":shared:feature-summary",
+    ":shared:feature-backup"
 )
