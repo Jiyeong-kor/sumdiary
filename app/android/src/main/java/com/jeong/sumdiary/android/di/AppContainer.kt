@@ -15,6 +15,7 @@ import com.jeong.sumdiary.feature.summary.SummaryViewModel
 
 class AppContainer(context: Context) {
 
+    private val preferences = context.getSharedPreferences("sumdiary_app", Context.MODE_PRIVATE)
     private val dispatchers = DefaultDispatchersProvider
 
     private val diaryDatabase = DiaryDatabase(
@@ -43,4 +44,19 @@ class AppContainer(context: Context) {
         generateWeeklySummary,
         dispatchers.io
     )
+
+    fun hasCompletedFirstRunGuide(): Boolean =
+        preferences.getBoolean(KEY_FIRST_RUN_GUIDE_COMPLETED, false)
+
+    fun completeFirstRunGuide() {
+        preferences.edit().putBoolean(KEY_FIRST_RUN_GUIDE_COMPLETED, true).apply()
+    }
+
+    fun resetFirstRunGuide() {
+        preferences.edit().putBoolean(KEY_FIRST_RUN_GUIDE_COMPLETED, false).apply()
+    }
+
+    private companion object {
+        const val KEY_FIRST_RUN_GUIDE_COMPLETED = "first_run_guide_completed"
+    }
 }
