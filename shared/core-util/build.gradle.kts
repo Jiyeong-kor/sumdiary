@@ -34,7 +34,7 @@ kotlin {
 
 android {
     namespace = "com.jeong.sumdiary.core.util"
-    compileSdk = 34
+    compileSdk = 36
     defaultConfig {
         minSdk = 24
     }
