@@ -5,9 +5,7 @@ import com.jeong.sumdiary.domain.diary.DiaryRepository
 import com.jeong.sumdiary.domain.summary.Summary
 import com.jeong.sumdiary.domain.summary.SummaryRepository
 import com.jeong.sumdiary.domain.summary.SummaryType
-import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.dayOfWeek
 import kotlinx.datetime.isoDayNumber
 
 class GenerateWeeklySummary(
@@ -15,8 +13,8 @@ class GenerateWeeklySummary(
     private val summaryRepository: SummaryRepository
 ) {
     suspend operator fun invoke(anchorDate: LocalDate): Summary {
-        val periodStart = anchorDate - DatePeriod(days = anchorDate.dayOfWeek.isoDayNumber - 1)
-        val periodEnd = periodStart + DatePeriod(days = 6)
+        val periodStart = anchorDate.minusDays(anchorDate.dayOfWeek.isoDayNumber - 1)
+        val periodEnd = periodStart.plusDays(6)
         val entries = collectEntries(periodStart, periodEnd)
         val summary = summaryRepository.summarize(entries)
         return summary.copy(
@@ -31,8 +29,14 @@ class GenerateWeeklySummary(
         var cursor = start
         while (cursor <= end) {
             result += diaryRepository.getByDate(cursor)
-            cursor += DatePeriod(days = 1)
+            cursor = cursor.plusDays(1)
         }
         return result
     }
+
+    private fun LocalDate.plusDays(days: Int): LocalDate =
+        LocalDate.fromEpochDays(toEpochDays() + days)
+
+    private fun LocalDate.minusDays(days: Int): LocalDate =
+        LocalDate.fromEpochDays(toEpochDays() - days)
 }

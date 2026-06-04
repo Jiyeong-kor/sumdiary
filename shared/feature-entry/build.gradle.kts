@@ -23,6 +23,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(libs.coroutines.core)
+                implementation(libs.datetime)
                 implementation(project(":shared:core-util"))
                 implementation(project(":shared:domain-diary"))
             }
@@ -33,7 +34,7 @@ kotlin {
 
 android {
     namespace = "com.jeong.sumdiary.feature.entry"
-    compileSdk = 34
+    compileSdk = 36
     defaultConfig {
         minSdk = 24
     }

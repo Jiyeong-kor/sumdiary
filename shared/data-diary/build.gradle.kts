@@ -64,7 +64,7 @@ sqldelight {
 
 android {
     namespace = "com.jeong.sumdiary.data.diary"
-    compileSdk = 34
+    compileSdk = 36
     defaultConfig {
         minSdk = 24
     }

@@ -2,9 +2,8 @@ package com.jeong.sumdiary.data.diary
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
+import com.jeong.sumdiary.data.diary.db.Diary
 import com.jeong.sumdiary.data.diary.db.DiaryDatabase
-import com.jeong.sumdiary.data.diary.db.SelectByDate
-import com.jeong.sumdiary.data.diary.db.SelectRange
 import com.jeong.sumdiary.domain.diary.DiaryEntry
 import com.jeong.sumdiary.domain.diary.DiaryRepository
 import kotlinx.coroutines.CoroutineDispatcher
@@ -45,15 +44,7 @@ class DiaryRepositoryImpl(
         ).asFlow().mapToList(dispatcher).map { rows -> rows.map { it.toDiaryEntry() } }
     }
 
-    private fun SelectByDate.toDiaryEntry(): DiaryEntry =
-        DiaryEntry(
-            id = id,
-            date = LocalDate.parse(date),
-            time = LocalTime.parse(time),
-            content = content
-        )
-
-    private fun SelectRange.toDiaryEntry(): DiaryEntry =
+    private fun Diary.toDiaryEntry(): DiaryEntry =
         DiaryEntry(
             id = id,
             date = LocalDate.parse(date),
