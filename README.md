@@ -124,12 +124,13 @@ Refs #27
 - Google Drive 암호화 백업 도메인 경계
 - SQLDelight 기반 백업 snapshot과 Android 백업 암호화 구현
 - Google Drive appDataFolder 업로드/다운로드/삭제 API client
+- Android Google Drive OAuth access token provider
 - 백업 설정 상태 UI와 백업 비밀번호 입력 UX
 - README 구조와 warning-free 프로젝트 규칙
 
 ### 진행 중
 
-- Android/iOS Google Drive OAuth access token provider 연동
+- iOS Google Drive OAuth access token provider 연동
 - 실제 Android/iOS 온디바이스 AI SDK 연동
 - 생체 인증 기반 앱 잠금과 백업 키 접근 승인
 - 복구 방식 선택과 충돌 처리 UX
@@ -139,7 +140,7 @@ Refs #27
 - 개인정보처리방침
 - 이용약관
 - Android release signing 설정
-- Google Drive OAuth scope 검토와 필요 시 Google 검증
+- Google Drive OAuth client id 설정, scope 검토와 필요 시 Google 검증
 - App Store / Google Play privacy form과 data safety 답변
 - 실제 기기 테스트와 미지원 기기 UX 검증
 - Android와 iOS 양쪽 출시 빌드 검증

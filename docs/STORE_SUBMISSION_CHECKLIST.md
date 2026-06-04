@@ -66,8 +66,8 @@
 현재 코드 기준으로 다음 항목은 출시 제출 전 반드시 제거하거나 실제 구현으로 교체해야 한다.
 
 - Google Drive OAuth client id Gradle property 미설정
-- Android Google Drive OAuth access token provider 미연결
 - Android release signing property 미설정
 - 실제 Android/iOS 온디바이스 AI SDK 미연동
+- iOS Google Drive OAuth access token provider 미연결
 - iOS 앱 archive build 검증 미완료
 - 개인정보처리방침과 이용약관 법무 검토 미완료

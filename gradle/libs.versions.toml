@@ -12,6 +12,7 @@ kotlin = "2.2.20"
 ktor = "3.3.0"
 material3 = "1.13.0"
 napier = "2.7.1"
+play-services-auth = "21.6.0"
 serialization = "1.9.0"
 sqldelight = "2.1.0"
 
@@ -32,6 +33,7 @@ ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "k
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 material3 = { module = "com.google.android.material:material", version.ref = "material3" }
 napier = { module = "io.github.aakira:napier", version.ref = "napier" }
+play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "play-services-auth" }
 serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
 sqldelight-coroutines = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
 sqldelight-driver-android = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }

@@ -112,6 +112,10 @@ tasks.register("checkReleaseReadiness") {
             path = "app/iosApp/SumDiary.xcodeproj/project.pbxproj",
             message = "iOS Xcode app project is missing."
         )
+        requireFile(
+            path = "app/iosApp/SumDiary/GoogleDriveAuthorizationProvider.swift",
+            message = "iOS Google Drive OAuth access token provider is missing."
+        )
 
         if (blockers.isEmpty()) {
             logger.lifecycle("Release readiness audit passed. No blockers found.")
