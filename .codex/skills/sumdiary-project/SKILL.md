@@ -35,6 +35,13 @@ description: SumDiary 프로젝트에서 README, 문서, GitHub 이슈/PR, 빌�
 - Gradle, Kotlin, Compose deprecation warning은 방치하지 않는다.
 - 개인정보, 백업, 온디바이스 AI 관련 warning 또는 lint 성격의 문제는 출시 심사 리스크로 본다.
 
+## Dependency Injection
+
+- Android DI는 Hilt를 사용한다.
+- Hilt 전환과 compiler 설정은 `kapt`가 아니라 KSP를 사용한다.
+- `kapt` 설정을 새로 추가하지 않는다.
+- Hilt는 Dagger 기반이므로 의존성 group이 `com.google.dagger`일 수 있지만, 앱 코드에서는 Dagger component를 직접 구성하지 않고 Hilt API를 우선한다.
+
 ## README Structure
 
 README는 “투자자/사용자용 홍보문”보다 “프로젝트를 이해하고 실행할 수 있는 제품 문서”로 작성한다.

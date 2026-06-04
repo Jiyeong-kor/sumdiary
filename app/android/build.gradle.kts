@@ -4,8 +4,10 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.compose.multiplatform)
+    alias(libs.plugins.hilt.android)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -55,6 +57,8 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.coroutines.android)
     implementation(libs.datetime)
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
     implementation(libs.sqldelight.driver.android)
     implementation(project(":shared:core-designsystem"))
     implementation(project(":shared:core-util"))

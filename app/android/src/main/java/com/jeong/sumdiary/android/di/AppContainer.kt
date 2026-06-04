@@ -22,8 +22,12 @@ import com.jeong.sumdiary.domain.summary.usecase.GenerateDailySummary
 import com.jeong.sumdiary.domain.summary.usecase.GenerateWeeklySummary
 import com.jeong.sumdiary.feature.entry.EntryViewModel
 import com.jeong.sumdiary.feature.summary.SummaryViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 
-class AppContainer(context: Context) {
+class AppContainer @Inject constructor(
+    @ApplicationContext context: Context
+) {
 
     private val preferences = context.getSharedPreferences("sumdiary_app", Context.MODE_PRIVATE)
     private val dispatchers = DefaultDispatchersProvider
