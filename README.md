@@ -39,7 +39,7 @@ SumDiary는 Android와 iOS 동시 출시를 목표로 하는 Kotlin Multiplatfor
 - iOS shared factory 구조
 - SQLDelight 기반 로컬 저장소
 - feature/domain/data/core 모듈 분리
-- GitHub Actions 기반 Android CI
+- GitHub Actions 기반 Android/iOS KMP CI
 
 ## 모듈 구성
 
@@ -57,7 +57,7 @@ SumDiary는 Android와 iOS 동시 출시를 목표로 하는 Kotlin Multiplatfor
 | `shared:feature-entry` | 일기 작성/목록 상태 관리 |
 | `shared:feature-summary` | 요약 화면 상태 관리 |
 | `shared:domain-backup` | 백업 도메인 모델, 암호화 파일, provider 계약 |
-| `shared:data-backup` | 백업 repository와 개발용 in-memory/fake 구현 |
+| `shared:data-backup` | 백업 repository, 암호화 구현, 출시 전 Google Drive 미구성 경계 |
 | `shared:feature-backup` | 백업 설정 화면 상태와 intent |
 | `shared:domain-auth` | 인증/보안 도메인 계약 |
 | `shared:data-auth` | 인증/보안 data 구현 |
@@ -85,7 +85,7 @@ SumDiary는 Android와 iOS 동시 출시를 목표로 하는 Kotlin Multiplatfor
 
 ### CI
 
-Android CI는 `.github/workflows/android-ci.yml`에서 관리합니다.
+Android/iOS KMP CI는 `.github/workflows/android-ci.yml`에서 관리합니다.
 
 ## 품질 기준
 
@@ -153,3 +153,6 @@ Refs #27
 - [CI Plan](docs/CI_PLAN.md)
 - [Git Workflow](docs/GIT_WORKFLOW.md)
 - [UI Delivery Plan](docs/UI_DELIVERY_PLAN.md)
+- [Privacy Policy](docs/PRIVACY_POLICY.md)
+- [Terms of Use](docs/TERMS_OF_USE.md)
+- [Store Submission Checklist](docs/STORE_SUBMISSION_CHECKLIST.md)

@@ -5,9 +5,11 @@ import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import com.jeong.sumdiary.core.util.DefaultDispatchersProvider
 import com.jeong.sumdiary.data.backup.AndroidBackupCipher
 import com.jeong.sumdiary.data.backup.BackupRepositoryImpl
-import com.jeong.sumdiary.data.backup.DevelopmentBackupSnapshotRepository
-import com.jeong.sumdiary.data.backup.InMemoryBackupCloudRepository
+import com.jeong.sumdiary.data.backup.DatabaseBackupSnapshotRepository
+import com.jeong.sumdiary.data.backup.GoogleDriveBackupCloudRepository
+import com.jeong.sumdiary.data.backup.GoogleDriveBackupConfiguration
 import com.jeong.sumdiary.data.backup.RealBackupEncryptor
+import com.jeong.sumdiary.android.R
 import com.jeong.sumdiary.data.diary.DiaryRepositoryImpl
 import com.jeong.sumdiary.data.diary.db.DiaryDatabase
 import com.jeong.sumdiary.data.summary.PlatformSummarizerProvider
@@ -50,9 +52,17 @@ class AppContainer @Inject constructor(
 
     private val generateDailySummary = GenerateDailySummary(diaryRepository, summaryRepository)
     private val generateWeeklySummary = GenerateWeeklySummary(diaryRepository, summaryRepository)
-    private val backupCloudRepository = InMemoryBackupCloudRepository()
+    private val backupCloudRepository = GoogleDriveBackupCloudRepository(
+        GoogleDriveBackupConfiguration(
+            oauthClientId = context.getString(R.string.google_drive_oauth_client_id)
+        )
+    )
     private val backupRepository = BackupRepositoryImpl(
-        snapshotRepository = DevelopmentBackupSnapshotRepository(),
+        snapshotRepository = DatabaseBackupSnapshotRepository(
+            diaryDatabase = diaryDatabase,
+            summaryDatabase = summaryDatabase,
+            dispatcher = dispatchers.io
+        ),
         backupEncryptor = RealBackupEncryptor(AndroidBackupCipher()),
         cloudRepository = backupCloudRepository
     )

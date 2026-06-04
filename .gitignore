@@ -7,6 +7,8 @@
 .cxx/
 *.iml
 *.kts~
+*.jks
+*.keystore
 .kotlin/**
 # Android
 captures/
@@ -14,7 +16,6 @@ captures/
 # iOS
 DerivedData/
 *.xcworkspace/
-*.xcodeproj/
 *.xcuserdata/
 # Kotlin/Native
 .korge/
