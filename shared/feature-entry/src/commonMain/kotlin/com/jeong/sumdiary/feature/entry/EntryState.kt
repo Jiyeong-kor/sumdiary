@@ -1,5 +1,6 @@
 package com.jeong.sumdiary.feature.entry
 
+import com.jeong.sumdiary.domain.diary.DiaryEntry
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
@@ -11,6 +12,7 @@ data class EntryState(
     val text: String,
     val date: LocalDate,
     val time: LocalTime,
+    val entries: List<DiaryEntry>,
     val saving: Boolean
 ) {
     companion object {
@@ -21,6 +23,7 @@ data class EntryState(
                 text = "",
                 date = now.date,
                 time = now.time,
+                entries = emptyList(),
                 saving = false
             )
         }

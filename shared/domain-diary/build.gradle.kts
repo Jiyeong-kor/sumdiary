@@ -33,7 +33,7 @@ kotlin {
 
 android {
     namespace = "com.jeong.sumdiary.domain.diary"
-    compileSdk = 34
+    compileSdk = 36
     defaultConfig {
         minSdk = 24
     }

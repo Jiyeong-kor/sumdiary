@@ -1,6 +1,7 @@
 package com.jeong.sumdiary.android.ui
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,6 +11,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -28,7 +31,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.jeong.sumdiary.android.di.AppContainer
+import com.jeong.sumdiary.domain.diary.DiaryEntry
 import com.jeong.sumdiary.feature.entry.EntryIntent
+import com.jeong.sumdiary.feature.entry.EntryState
 import com.jeong.sumdiary.feature.summary.SummaryIntent
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -73,7 +78,10 @@ fun SumDiaryScreen(container: AppContainer) {
         }
     ) { padding ->
         when (selectedTab) {
-            0 -> DiaryTabContent(padding)
+            0 -> DiaryTabContent(
+                paddingValues = padding,
+                state = entryState
+            )
             else -> SummaryTabContent(padding, summaryState) {
                 summaryViewModel.dispatch(it)
             }
@@ -94,10 +102,10 @@ fun SumDiaryScreen(container: AppContainer) {
 }
 
 @Composable
-private fun DiaryTabContent(paddingValues: PaddingValues) {
-    val dummyEntries = remember {
-        listOf("오늘의 샘플 일기", "AI 요약을 확인해보세요")
-    }
+private fun DiaryTabContent(
+    paddingValues: PaddingValues,
+    state: EntryState
+) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -105,8 +113,34 @@ private fun DiaryTabContent(paddingValues: PaddingValues) {
         verticalArrangement = Arrangement.spacedBy(12.dp),
         contentPadding = PaddingValues(16.dp)
     ) {
-        items(dummyEntries) { text ->
-            Text(text = text)
+        if (state.entries.isEmpty()) {
+            item {
+                Box(
+                    modifier = Modifier
+                        .fillParentMaxSize()
+                        .padding(24.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(text = "아직 오늘 작성한 일기가 없어요.")
+                }
+            }
+        } else {
+            items(state.entries, key = { it.id }) { entry ->
+                DiaryEntryItem(entry)
+            }
+        }
+    }
+}
+
+@Composable
+private fun DiaryEntryItem(entry: DiaryEntry) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text(text = entry.time.toString())
+            Text(text = entry.content)
         }
     }
 }
@@ -129,8 +163,12 @@ private fun SummaryTabContent(
         horizontalAlignment = Alignment.Start
     ) {
         Text(text = "기간: ${state.period.first} ~ ${state.period.second}")
-        Text(text = state.text)
-        Text(text = "감정 태그: ${state.emotions.joinToString()}")
+        if (state.loading) {
+            CircularProgressIndicator()
+        } else {
+            Text(text = state.text)
+            Text(text = "감정 태그: ${state.emotions.joinToString()}")
+        }
         Button(onClick = { onIntent(SummaryIntent.LoadDaily(today)) }) {
             Text(text = "오늘 요약")
         }
