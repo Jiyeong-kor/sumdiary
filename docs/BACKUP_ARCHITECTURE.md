@@ -90,6 +90,7 @@ User-owned Cloud Storage
 - Google Drive OAuth 연결 UI를 제공한다.
 - iOS Keychain 기반 키 보관 또는 키 파생 보조 기능을 제공한다.
 - iOS용 provider adapter를 구현한다.
+- iOS GoogleSignIn provider는 `drive.appdata` scope를 요청하고, SwiftUI `onOpenURL` callback에서 GoogleSignIn redirect URL을 처리한다.
 
 ## 7. Provider 전략
 
@@ -364,7 +365,7 @@ SumDiary는 Google/Dropbox/Apple 계정을 삭제할 수 없다.
 
 - OAuth token은 OS 보안 저장소에 저장한다.
 - Android는 Keystore/EncryptedSharedPreferences 사용을 검토한다.
-- iOS는 Keychain 사용을 검토한다.
+- iOS는 GoogleSignIn SDK의 저장 상태와 Keychain 정책을 검토한다.
 - 토큰은 백업 파일에 포함하지 않는다.
 - 연결 해제 시 로컬 토큰을 삭제한다.
 

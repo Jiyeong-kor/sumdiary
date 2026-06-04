@@ -116,6 +116,16 @@ tasks.register("checkReleaseReadiness") {
             path = "app/iosApp/SumDiary/GoogleDriveAuthorizationProvider.swift",
             message = "iOS Google Drive OAuth access token provider is missing."
         )
+        requireNoToken(
+            path = "app/iosApp/SumDiary.xcodeproj/project.pbxproj",
+            token = "GOOGLE_DRIVE_IOS_CLIENT_ID = \"\";",
+            message = "iOS Google Drive OAuth client id Xcode build setting is missing."
+        )
+        requireNoToken(
+            path = "app/iosApp/SumDiary.xcodeproj/project.pbxproj",
+            token = "GOOGLE_DRIVE_IOS_REVERSED_CLIENT_ID = \"\";",
+            message = "iOS Google Drive reversed client id URL scheme Xcode build setting is missing."
+        )
 
         if (blockers.isEmpty()) {
             logger.lifecycle("Release readiness audit passed. No blockers found.")

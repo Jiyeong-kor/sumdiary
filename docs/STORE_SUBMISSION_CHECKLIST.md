@@ -34,6 +34,7 @@
 - [x] Xcode 프로젝트 또는 iOS 앱 shell 구조 확정
 - [ ] iOS archive build 통과
 - [ ] bundle identifier, version, build number 확정
+- [ ] iOS Google Drive OAuth client id와 reversed URL scheme 설정
 - [ ] App Privacy 답변 작성
 - [ ] 개인정보처리방침 URL 등록
 - [ ] Face ID 또는 민감 권한 사용 문구 검토
@@ -66,8 +67,8 @@
 현재 코드 기준으로 다음 항목은 출시 제출 전 반드시 제거하거나 실제 구현으로 교체해야 한다.
 
 - Google Drive OAuth client id Gradle property 미설정
+- iOS Google Drive OAuth client id/reversed URL scheme Xcode build setting 미설정
 - Android release signing property 미설정
 - 실제 Android/iOS 온디바이스 AI SDK 미연동
-- iOS Google Drive OAuth access token provider 미연결
 - iOS 앱 archive build 검증 미완료
 - 개인정보처리방침과 이용약관 법무 검토 미완료
