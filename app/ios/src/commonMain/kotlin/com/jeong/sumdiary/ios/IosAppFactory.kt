@@ -8,13 +8,15 @@ import com.jeong.sumdiary.data.summary.PlatformSummarizerProvider
 import com.jeong.sumdiary.data.summary.SummaryRepositoryImpl
 import com.jeong.sumdiary.data.summary.db.SummaryDatabase
 import com.jeong.sumdiary.domain.summary.usecase.GenerateDailySummary
+import com.jeong.sumdiary.domain.summary.usecase.GenerateWeeklySummary
 import com.jeong.sumdiary.feature.entry.EntryIntent
 import com.jeong.sumdiary.feature.entry.EntryViewModel
 import com.jeong.sumdiary.feature.summary.SummaryIntent
 import com.jeong.sumdiary.feature.summary.SummaryViewModel
-import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 class IosAppFactory {
     private val dispatchers = DefaultDispatchersProvider
@@ -51,6 +53,7 @@ class IosSampleController(factory: IosAppFactory = IosAppFactory()) {
     private val summaryViewModel = factory.createSummaryViewModel()
     private val entryViewModel = factory.createEntryViewModel()
 
+    @OptIn(ExperimentalTime::class)
     fun loadTodaySummary() {
         val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
         summaryViewModel.dispatch(SummaryIntent.LoadDaily(today))

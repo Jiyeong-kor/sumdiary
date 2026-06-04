@@ -10,7 +10,27 @@ insertSummary:
 INSERT INTO Summary(type, periodStart, periodEnd, summaryText)
 VALUES (?, ?, ?, ?);
 
+upsertSummary:
+INSERT OR REPLACE INTO Summary(id, type, periodStart, periodEnd, summaryText)
+VALUES (
+    COALESCE(
+        (SELECT id FROM Summary WHERE periodStart = :periodStart AND periodEnd = :periodEnd LIMIT 1),
+        NULL
+    ),
+    :type,
+    :periodStart,
+    :periodEnd,
+    :summaryText
+);
+
 selectSummary:
 SELECT id, type, periodStart, periodEnd, summaryText FROM Summary
 WHERE periodStart = ? AND periodEnd = ?
 LIMIT 1;
+
+selectAll:
+SELECT id, type, periodStart, periodEnd, summaryText FROM Summary
+ORDER BY periodStart ASC, periodEnd ASC;
+
+deleteAll:
+DELETE FROM Summary;

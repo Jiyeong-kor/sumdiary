@@ -10,6 +10,17 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
+val releaseSigningStoreFile = providers.gradleProperty("sumdiary.android.signing.storeFile")
+val releaseSigningStorePassword = providers.gradleProperty("sumdiary.android.signing.storePassword")
+val releaseSigningKeyAlias = providers.gradleProperty("sumdiary.android.signing.keyAlias")
+val releaseSigningKeyPassword = providers.gradleProperty("sumdiary.android.signing.keyPassword")
+val hasReleaseSigningConfig = listOf(
+    releaseSigningStoreFile,
+    releaseSigningStorePassword,
+    releaseSigningKeyAlias,
+    releaseSigningKeyPassword
+).all { it.orNull?.isNotBlank() == true }
+
 android {
     namespace = "com.jeong.sumdiary.android"
     compileSdk = 36
@@ -20,11 +31,30 @@ android {
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
+        resValue(
+            type = "string",
+            name = "google_drive_oauth_client_id",
+            value = providers.gradleProperty("sumdiary.googleDriveOAuthClientId").orElse("").get()
+        )
+    }
+
+    signingConfigs {
+        if (hasReleaseSigningConfig) {
+            create("release") {
+                storeFile = file(releaseSigningStoreFile.get())
+                storePassword = releaseSigningStorePassword.get()
+                keyAlias = releaseSigningKeyAlias.get()
+                keyPassword = releaseSigningKeyPassword.get()
+            }
+        }
     }
 
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
+            if (hasReleaseSigningConfig) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
 

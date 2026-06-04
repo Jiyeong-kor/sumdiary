@@ -23,7 +23,11 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
+                implementation(project(":shared:data-diary"))
+                implementation(project(":shared:data-summary"))
                 implementation(project(":shared:domain-backup"))
+                implementation(project(":shared:domain-diary"))
+                implementation(project(":shared:domain-summary"))
                 implementation(libs.coroutines.core)
                 implementation(libs.datetime)
                 implementation(libs.serialization.json)

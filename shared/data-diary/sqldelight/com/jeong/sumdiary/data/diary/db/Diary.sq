@@ -19,6 +19,13 @@ SELECT id, date, time, content FROM Diary
 WHERE date BETWEEN :startDate AND :endDate
 ORDER BY date ASC, time ASC;
 
+selectAll:
+SELECT id, date, time, content FROM Diary
+ORDER BY date ASC, time ASC;
+
 deleteById:
 DELETE FROM Diary
 WHERE id = :id;
+
+deleteAll:
+DELETE FROM Diary;
