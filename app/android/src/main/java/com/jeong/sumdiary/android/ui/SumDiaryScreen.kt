@@ -42,10 +42,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.jeong.sumdiary.android.di.AppContainer
 import com.jeong.sumdiary.core.designsystem.SumDiarySpacing
+import com.jeong.sumdiary.domain.backup.BackupPassphrase
 import com.jeong.sumdiary.domain.diary.DiaryEntry
 import com.jeong.sumdiary.feature.backup.BackupIntent
 import com.jeong.sumdiary.feature.backup.BackupState
@@ -80,6 +82,7 @@ fun SumDiaryScreen(container: AppContainer) {
     }
     var selectedTab by remember { mutableStateOf(SumDiaryTab.Diary) }
     var showEntryEditor by remember { mutableStateOf(false) }
+    var backupPassphraseAction by remember { mutableStateOf<BackupPassphraseAction?>(null) }
     var pendingDeleteEntryId by remember { mutableStateOf<String?>(null) }
     val today =
         remember { Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date }
@@ -147,7 +150,15 @@ fun SumDiaryScreen(container: AppContainer) {
             SumDiaryTab.Settings -> SettingsTabContent(
                 paddingValues = padding,
                 backupState = backupState,
-                onBackupIntent = { backupViewModel.dispatch(it) },
+                onBackupIntent = { intent ->
+                    when (intent) {
+                        BackupIntent.ConnectGoogleDrive,
+                        BackupIntent.DeleteRemoteBackup -> backupViewModel.dispatch(intent)
+                        is BackupIntent.RunManualBackup,
+                        is BackupIntent.RestoreMerge -> backupViewModel.dispatch(intent)
+                    }
+                },
+                onRequestBackupPassphrase = { backupPassphraseAction = it },
                 onShowGuide = {
                     container.resetFirstRunGuide()
                     firstRunGuideCompleted = false
@@ -186,6 +197,28 @@ fun SumDiaryScreen(container: AppContainer) {
             }
         )
     }
+
+    backupPassphraseAction?.let { action ->
+        BackupPassphraseDialog(
+            action = action,
+            onDismiss = { backupPassphraseAction = null },
+            onConfirm = { passphrase ->
+                backupViewModel.dispatch(action.toIntent(passphrase))
+                backupPassphraseAction = null
+            }
+        )
+    }
+}
+
+private enum class BackupPassphraseAction {
+    Backup,
+    Restore;
+
+    fun toIntent(passphrase: BackupPassphrase): BackupIntent =
+        when (this) {
+            Backup -> BackupIntent.RunManualBackup(passphrase)
+            Restore -> BackupIntent.RestoreMerge(passphrase)
+        }
 }
 
 @Composable
@@ -761,6 +794,7 @@ private fun SettingsTabContent(
     paddingValues: PaddingValues,
     backupState: BackupState,
     onBackupIntent: (BackupIntent) -> Unit,
+    onRequestBackupPassphrase: (BackupPassphraseAction) -> Unit,
     onShowGuide: () -> Unit
 ) {
     Column(
@@ -776,7 +810,8 @@ private fun SettingsTabContent(
         )
         BackupSettingsPanel(
             state = backupState,
-            onIntent = onBackupIntent
+            onIntent = onBackupIntent,
+            onRequestPassphrase = onRequestBackupPassphrase
         )
         SettingsRow(title = "생체 인증", description = "OS 기본 인증을 사용해요")
         SettingsRow(
@@ -790,7 +825,8 @@ private fun SettingsTabContent(
 @Composable
 private fun BackupSettingsPanel(
     state: BackupState,
-    onIntent: (BackupIntent) -> Unit
+    onIntent: (BackupIntent) -> Unit,
+    onRequestPassphrase: (BackupPassphraseAction) -> Unit
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
@@ -864,7 +900,7 @@ private fun BackupSettingsPanel(
                 Button(
                     modifier = Modifier.weight(1f),
                     enabled = !state.busy,
-                    onClick = { onIntent(BackupIntent.RunManualBackup) }
+                    onClick = { onRequestPassphrase(BackupPassphraseAction.Backup) }
                 ) {
                     Text(text = "백업")
                 }
@@ -876,7 +912,7 @@ private fun BackupSettingsPanel(
                 TextButton(
                     modifier = Modifier.weight(1f),
                     enabled = !state.busy,
-                    onClick = { onIntent(BackupIntent.RestoreMerge) }
+                    onClick = { onRequestPassphrase(BackupPassphraseAction.Restore) }
                 ) {
                     Text(text = "복구")
                 }
@@ -890,6 +926,73 @@ private fun BackupSettingsPanel(
             }
         }
     }
+}
+
+@Composable
+private fun BackupPassphraseDialog(
+    action: BackupPassphraseAction,
+    onDismiss: () -> Unit,
+    onConfirm: (BackupPassphrase) -> Unit
+) {
+    var passphraseText by remember { mutableStateOf("") }
+    var errorText by remember { mutableStateOf<String?>(null) }
+    val title = when (action) {
+        BackupPassphraseAction.Backup -> "백업 비밀번호 입력"
+        BackupPassphraseAction.Restore -> "복구 비밀번호 입력"
+    }
+    val description = when (action) {
+        BackupPassphraseAction.Backup -> "이 비밀번호로 백업 파일을 암호화해요. 잃어버리면 새 기기에서 복구할 수 없어요."
+        BackupPassphraseAction.Restore -> "백업을 만들 때 사용한 비밀번호를 입력해야 복구할 수 있어요."
+    }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(text = title) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.Sm)) {
+                Text(
+                    text = description,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                OutlinedTextField(
+                    value = passphraseText,
+                    onValueChange = {
+                        passphraseText = it
+                        errorText = null
+                    },
+                    label = { Text("백업 비밀번호") },
+                    visualTransformation = PasswordVisualTransformation(),
+                    isError = errorText != null,
+                    supportingText = {
+                        Text(
+                            text = errorText
+                                ?: "${BackupPassphrase.MinimumLength}자 이상 입력해 주세요."
+                        )
+                    },
+                    singleLine = true
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    runCatching { BackupPassphrase(passphraseText) }
+                        .onSuccess(onConfirm)
+                        .onFailure {
+                            errorText = "${BackupPassphrase.MinimumLength}자 이상 입력해야 해요."
+                        }
+                }
+            ) {
+                Text(text = if (action == BackupPassphraseAction.Backup) "백업" else "복구")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(text = "취소")
+            }
+        }
+    )
 }
 
 private val BackupUiStatus.label: String
