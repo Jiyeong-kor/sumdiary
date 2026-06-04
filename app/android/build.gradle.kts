@@ -9,12 +9,12 @@ plugins {
 
 android {
     namespace = "com.jeong.sumdiary.android"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.jeong.sumdiary.android"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
     }
@@ -50,6 +50,7 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.ktx)
     implementation(libs.coroutines.android)
+    implementation(libs.datetime)
     implementation(libs.sqldelight.driver.android)
     implementation(project(":shared:core-designsystem"))
     implementation(project(":shared:core-util"))

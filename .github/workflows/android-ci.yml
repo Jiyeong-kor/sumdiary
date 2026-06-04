@@ -1,0 +1,64 @@
+name: Android CI
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths-ignore:
+      - "docs/**"
+      - "**/*.md"
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - "docs/**"
+      - "**/*.md"
+
+concurrency:
+  group: android-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  android:
+    name: Android and KMP
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: ${{ github.event_name == 'pull_request' }}
+          gradle-home-cache-cleanup: true
+
+      - name: Make Gradle wrapper executable
+        run: chmod +x ./gradlew
+
+      - name: Build Android debug
+        run: ./gradlew :app:android:assembleDebug --build-cache --parallel --stacktrace
+
+      - name: Compile shared metadata
+        run: >
+          ./gradlew
+          :shared:core-model:compileKotlinMetadata
+          :shared:core-util:compileKotlinMetadata
+          :shared:core-designsystem:compileKotlinMetadata
+          :shared:domain-diary:compileKotlinMetadata
+          :shared:domain-summary:compileKotlinMetadata
+          :shared:feature-entry:compileKotlinMetadata
+          :shared:feature-summary:compileKotlinMetadata
+          --build-cache
+          --parallel
+          --stacktrace

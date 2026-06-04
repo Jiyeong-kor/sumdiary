@@ -30,10 +30,12 @@ import androidx.compose.ui.unit.dp
 import com.jeong.sumdiary.android.di.AppContainer
 import com.jeong.sumdiary.feature.entry.EntryIntent
 import com.jeong.sumdiary.feature.summary.SummaryIntent
-import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
+@OptIn(ExperimentalTime::class)
 @Composable
 fun SumDiaryScreen(container: AppContainer) {
     val entryViewModel = remember { container.entryViewModel() }
@@ -110,6 +112,7 @@ private fun DiaryTabContent(paddingValues: PaddingValues) {
 }
 
 @Composable
+@OptIn(ExperimentalTime::class)
 private fun SummaryTabContent(
     paddingValues: PaddingValues,
     state: com.jeong.sumdiary.feature.summary.SummaryState,

@@ -5,7 +5,7 @@
         android:name="com.jeong.sumdiary.android.SumDiaryApplication"
         android:allowBackup="false"
         android:label="SumDiary"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@drawable/ic_launcher">
         <activity
             android:name="com.jeong.sumdiary.android.MainActivity"
             android:exported="true">

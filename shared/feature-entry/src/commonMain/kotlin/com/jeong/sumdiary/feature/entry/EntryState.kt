@@ -4,7 +4,8 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 data class EntryState(
     val text: String,
@@ -13,6 +14,7 @@ data class EntryState(
     val saving: Boolean
 ) {
     companion object {
+        @OptIn(ExperimentalTime::class)
         fun initial(): EntryState {
             val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
             return EntryState(
