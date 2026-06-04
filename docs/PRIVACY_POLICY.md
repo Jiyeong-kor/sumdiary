@@ -34,7 +34,7 @@ SumDiary는 개인 일기 앱으로, 사용자가 직접 입력한 일기와 앱
 - 백업 파일은 앱에서 암호화한 뒤 외부 클라우드에 저장해야 한다.
 - 백업 파일에는 OAuth access token, refresh token, 백업 비밀번호, 암호화 키 원문을 포함하지 않는다.
 - 사용자가 백업 비밀번호를 잃어버리면 SumDiary도 백업 파일을 복구할 수 없다.
-- 현재 Android 앱 연결 경로에는 개발용 in-memory 백업 저장소가 남아 있으므로, 실제 Google Drive OAuth/API 연동 전에는 제출 빌드로 사용할 수 없다.
+- 현재 Android 앱 연결 경로에는 실제 Google Drive OAuth access token provider가 아직 연결되지 않았으므로, 해당 provider 연동 전에는 제출 빌드로 사용할 수 없다.
 
 ## 4. 제3자 서비스
 
@@ -46,6 +46,7 @@ SumDiary는 개인 일기 앱으로, 사용자가 직접 입력한 일기와 앱
 - 우선 검토 scope: `https://www.googleapis.com/auth/drive.appdata`
 - 출시 전 필요: OAuth consent screen, scope 검토표, 검증 필요 여부 확인, 사용자에게 연결 해제와 백업 삭제 방법 안내
 - Android 빌드 설정: 제출 전 `sumdiary.googleDriveOAuthClientId` Gradle property를 실제 OAuth client id로 설정해야 한다.
+- 구현 상태: 암호화된 백업 파일의 Google Drive `appDataFolder` 업로드, 다운로드, 삭제 API client는 코드에 포함되어 있으며, 플랫폼 OAuth token provider 연결은 출시 전 완료해야 한다.
 
 ### 분석 및 오류 수집 SDK
 

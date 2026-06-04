@@ -57,7 +57,7 @@ SumDiary는 Android와 iOS 동시 출시를 목표로 하는 Kotlin Multiplatfor
 | `shared:feature-entry` | 일기 작성/목록 상태 관리 |
 | `shared:feature-summary` | 요약 화면 상태 관리 |
 | `shared:domain-backup` | 백업 도메인 모델, 암호화 파일, provider 계약 |
-| `shared:data-backup` | 백업 repository, 암호화 구현, 출시 전 Google Drive 미구성 경계 |
+| `shared:data-backup` | 백업 repository, 암호화 구현, SQLDelight snapshot, Google Drive appDataFolder API client |
 | `shared:feature-backup` | 백업 설정 화면 상태와 intent |
 | `shared:domain-auth` | 인증/보안 도메인 계약 |
 | `shared:data-auth` | 인증/보안 data 구현 |
@@ -122,13 +122,14 @@ Refs #27
 - 일기 작성/수정/삭제 확인 흐름
 - 요약 상태 UX와 온디바이스 요약 엔진 지원 여부 경계
 - Google Drive 암호화 백업 도메인 경계
+- SQLDelight 기반 백업 snapshot과 Android 백업 암호화 구현
+- Google Drive appDataFolder 업로드/다운로드/삭제 API client
 - 백업 설정 상태 UI와 백업 비밀번호 입력 UX
 - README 구조와 warning-free 프로젝트 규칙
 
 ### 진행 중
 
-- 실제 Google Drive OAuth/API 연동
-- 실제 백업 암호화 구현
+- Android/iOS Google Drive OAuth access token provider 연동
 - 실제 Android/iOS 온디바이스 AI SDK 연동
 - 생체 인증 기반 앱 잠금과 백업 키 접근 승인
 - 복구 방식 선택과 충돌 처리 UX
@@ -137,6 +138,7 @@ Refs #27
 
 - 개인정보처리방침
 - 이용약관
+- Android release signing 설정
 - Google Drive OAuth scope 검토와 필요 시 Google 검증
 - App Store / Google Play privacy form과 data safety 답변
 - 실제 기기 테스트와 미지원 기기 UX 검증

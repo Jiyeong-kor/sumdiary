@@ -30,6 +30,7 @@ kotlin {
                 implementation(project(":shared:domain-summary"))
                 implementation(libs.coroutines.core)
                 implementation(libs.datetime)
+                implementation(libs.ktor.client.core)
                 implementation(libs.serialization.json)
             }
         }
@@ -37,7 +38,28 @@ kotlin {
             dependencies {
                 implementation(kotlin("test"))
                 implementation(libs.coroutines.test)
+                implementation(libs.ktor.client.mock)
             }
+        }
+        val androidMain by getting {
+            dependencies {
+                implementation(libs.ktor.client.okhttp)
+            }
+        }
+        val iosMain by creating {
+            dependsOn(commonMain)
+            dependencies {
+                implementation(libs.ktor.client.darwin)
+            }
+        }
+        val iosX64Main by getting {
+            dependsOn(iosMain)
+        }
+        val iosArm64Main by getting {
+            dependsOn(iosMain)
+        }
+        val iosSimulatorArm64Main by getting {
+            dependsOn(iosMain)
         }
     }
 }

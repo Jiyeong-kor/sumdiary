@@ -9,6 +9,7 @@ import com.jeong.sumdiary.data.backup.DatabaseBackupSnapshotRepository
 import com.jeong.sumdiary.data.backup.GoogleDriveBackupCloudRepository
 import com.jeong.sumdiary.data.backup.GoogleDriveBackupConfiguration
 import com.jeong.sumdiary.data.backup.RealBackupEncryptor
+import com.jeong.sumdiary.data.backup.UnavailableGoogleDriveAccessTokenProvider
 import com.jeong.sumdiary.android.R
 import com.jeong.sumdiary.data.diary.DiaryRepositoryImpl
 import com.jeong.sumdiary.data.diary.db.DiaryDatabase
@@ -53,9 +54,10 @@ class AppContainer @Inject constructor(
     private val generateDailySummary = GenerateDailySummary(diaryRepository, summaryRepository)
     private val generateWeeklySummary = GenerateWeeklySummary(diaryRepository, summaryRepository)
     private val backupCloudRepository = GoogleDriveBackupCloudRepository(
-        GoogleDriveBackupConfiguration(
+        configuration = GoogleDriveBackupConfiguration(
             oauthClientId = context.getString(R.string.google_drive_oauth_client_id)
-        )
+        ),
+        accessTokenProvider = UnavailableGoogleDriveAccessTokenProvider
     )
     private val backupRepository = BackupRepositoryImpl(
         snapshotRepository = DatabaseBackupSnapshotRepository(

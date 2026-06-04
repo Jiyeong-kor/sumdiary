@@ -85,7 +85,7 @@ shared metadata compile은 전체 shared 모듈을 대상으로 실행한다.
 
 - iOS SwiftUI app archive build
 - signed Android release bundle 검증
-- Google Drive backup fake provider 통합 테스트
+- Google Drive OAuth token provider 통합 테스트
 - 스토어 제출 전 privacy checklist strict gate
 
 ## 6. PR 필수 체크
