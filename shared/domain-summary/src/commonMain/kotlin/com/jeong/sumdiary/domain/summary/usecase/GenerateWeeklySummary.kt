@@ -2,7 +2,7 @@ package com.jeong.sumdiary.domain.summary.usecase
 
 import com.jeong.sumdiary.domain.diary.DiaryEntry
 import com.jeong.sumdiary.domain.diary.DiaryRepository
-import com.jeong.sumdiary.domain.summary.Summary
+import com.jeong.sumdiary.domain.summary.SummaryGenerationResult
 import com.jeong.sumdiary.domain.summary.SummaryRepository
 import com.jeong.sumdiary.domain.summary.SummaryType
 import kotlinx.datetime.LocalDate
@@ -12,15 +12,23 @@ class GenerateWeeklySummary(
     private val diaryRepository: DiaryRepository,
     private val summaryRepository: SummaryRepository
 ) {
-    suspend operator fun invoke(anchorDate: LocalDate): Summary {
+    suspend operator fun invoke(anchorDate: LocalDate): SummaryGenerationResult {
         val periodStart = anchorDate.minusDays(anchorDate.dayOfWeek.isoDayNumber - 1)
         val periodEnd = periodStart.plusDays(6)
         val entries = collectEntries(periodStart, periodEnd)
+        if (entries.isEmpty()) {
+            return SummaryGenerationResult.NoEntries(
+                periodStart = periodStart,
+                periodEnd = periodEnd
+            )
+        }
         val summary = summaryRepository.summarize(entries)
-        return summary.copy(
-            type = SummaryType.WEEKLY,
-            periodStart = periodStart,
-            periodEnd = periodEnd
+        return SummaryGenerationResult.Success(
+            summary.copy(
+                type = SummaryType.WEEKLY,
+                periodStart = periodStart,
+                periodEnd = periodEnd
+            )
         )
     }
 
