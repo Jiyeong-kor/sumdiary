@@ -26,15 +26,14 @@ class BackupViewModel(
     private val dispatcher: CoroutineDispatcher
 ) {
     private val scope = CoroutineScope(SupervisorJob() + dispatcher)
-    private val developmentPassphrase = BackupPassphrase("development-only-passphrase")
     private val _state = MutableStateFlow(BackupState.initial(provider.displayName))
     val state: StateFlow<BackupState> = _state.asStateFlow()
 
     fun dispatch(intent: BackupIntent) {
         when (intent) {
             BackupIntent.ConnectGoogleDrive -> connect()
-            BackupIntent.RunManualBackup -> runManualBackup()
-            BackupIntent.RestoreMerge -> restoreMerge()
+            is BackupIntent.RunManualBackup -> runManualBackup(intent.passphrase)
+            is BackupIntent.RestoreMerge -> restoreMerge(intent.passphrase)
             BackupIntent.DeleteRemoteBackup -> deleteRemote()
         }
     }
@@ -59,10 +58,10 @@ class BackupViewModel(
         }
     }
 
-    private fun runManualBackup() {
+    private fun runManualBackup(passphrase: BackupPassphrase) {
         scope.launch {
             _state.value = _state.value.toRunning("백업 암호화 준비 중")
-            val result = runCatching { runBackup(developmentPassphrase) }.getOrElse {
+            val result = runCatching { runBackup(passphrase) }.getOrElse {
                 _state.value = _state.value.toFailure("백업을 완료하지 못했어요.")
                 return@launch
             }
@@ -70,12 +69,12 @@ class BackupViewModel(
         }
     }
 
-    private fun restoreMerge() {
+    private fun restoreMerge(passphrase: BackupPassphrase) {
         scope.launch {
             _state.value = _state.value.toRunning("복구 파일 확인 중")
             val result = runCatching {
                 restoreBackup(
-                    passphrase = developmentPassphrase,
+                    passphrase = passphrase,
                     mode = BackupRestoreMode.Merge
                 )
             }.getOrElse {
