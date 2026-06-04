@@ -38,7 +38,7 @@ UI 구현 전 다음 문서를 만든다.
 권장 문서:
 
 ```text
-docs/UX_FLOWS.md
+docs/UX_FLOW.md
 ```
 
 ## 4. 디자인 시스템 산출물
