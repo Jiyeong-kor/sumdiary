@@ -55,9 +55,12 @@ dependencies {
     implementation(project(":shared:core-designsystem"))
     implementation(project(":shared:core-util"))
     implementation(project(":shared:data-diary"))
+    implementation(project(":shared:data-backup"))
     implementation(project(":shared:data-summary"))
     implementation(project(":shared:domain-diary"))
+    implementation(project(":shared:domain-backup"))
     implementation(project(":shared:domain-summary"))
     implementation(project(":shared:feature-entry"))
+    implementation(project(":shared:feature-backup"))
     implementation(project(":shared:feature-summary"))
 }

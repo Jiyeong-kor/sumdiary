@@ -47,6 +47,9 @@ import androidx.compose.ui.unit.dp
 import com.jeong.sumdiary.android.di.AppContainer
 import com.jeong.sumdiary.core.designsystem.SumDiarySpacing
 import com.jeong.sumdiary.domain.diary.DiaryEntry
+import com.jeong.sumdiary.feature.backup.BackupIntent
+import com.jeong.sumdiary.feature.backup.BackupState
+import com.jeong.sumdiary.feature.backup.BackupUiStatus
 import com.jeong.sumdiary.feature.entry.EntryIntent
 import com.jeong.sumdiary.feature.entry.EntryState
 import com.jeong.sumdiary.feature.summary.SummaryIntent
@@ -68,8 +71,10 @@ private enum class SumDiaryTab(val title: String) {
 fun SumDiaryScreen(container: AppContainer) {
     val entryViewModel = remember { container.entryViewModel() }
     val summaryViewModel = remember { container.summaryViewModel() }
+    val backupViewModel = remember { container.backupViewModel() }
     val entryState by entryViewModel.state.collectAsState()
     val summaryState by summaryViewModel.state.collectAsState()
+    val backupState by backupViewModel.state.collectAsState()
     var firstRunGuideCompleted by remember {
         mutableStateOf(container.hasCompletedFirstRunGuide())
     }
@@ -141,6 +146,8 @@ fun SumDiaryScreen(container: AppContainer) {
             )
             SumDiaryTab.Settings -> SettingsTabContent(
                 paddingValues = padding,
+                backupState = backupState,
+                onBackupIntent = { backupViewModel.dispatch(it) },
                 onShowGuide = {
                     container.resetFirstRunGuide()
                     firstRunGuideCompleted = false
@@ -752,6 +759,8 @@ private fun SummaryStatusText(
 @Composable
 private fun SettingsTabContent(
     paddingValues: PaddingValues,
+    backupState: BackupState,
+    onBackupIntent: (BackupIntent) -> Unit,
     onShowGuide: () -> Unit
 ) {
     Column(
@@ -765,7 +774,10 @@ private fun SettingsTabContent(
             title = "설정",
             description = "백업, 보안, 개인정보"
         )
-        SettingsRow(title = "Google Drive 백업", description = "사용자가 켠 뒤에만 동작해요")
+        BackupSettingsPanel(
+            state = backupState,
+            onIntent = onBackupIntent
+        )
         SettingsRow(title = "생체 인증", description = "OS 기본 인증을 사용해요")
         SettingsRow(
             title = "앱 가이드 다시 보기",
@@ -773,6 +785,138 @@ private fun SettingsTabContent(
             onClick = onShowGuide
         )
     }
+}
+
+@Composable
+private fun BackupSettingsPanel(
+    state: BackupState,
+    onIntent: (BackupIntent) -> Unit
+) {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.small,
+        color = MaterialTheme.colorScheme.surface,
+        border = BorderStroke(1.dp, state.status.borderColor())
+    ) {
+        Column(
+            modifier = Modifier.padding(SumDiarySpacing.Lg),
+            verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.Sm)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Top
+            ) {
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.Xs)
+                ) {
+                    Text(
+                        text = "${state.providerName} 백업",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Text(
+                        text = state.statusTitle,
+                        color = state.status.contentColor(),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+                Text(
+                    text = state.status.label,
+                    color = state.status.contentColor(),
+                    style = MaterialTheme.typography.labelMedium
+                )
+            }
+
+            Text(
+                text = state.statusDescription,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Text(
+                text = "백업 파일은 앱에서 암호화한 뒤 저장하고, 백업 비밀번호는 화면에 표시하지 않아요.",
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodySmall
+            )
+            state.lastResult?.let {
+                Text(
+                    text = it,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.labelMedium,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+            if (state.busy) {
+                LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(SumDiarySpacing.Sm)
+            ) {
+                Button(
+                    modifier = Modifier.weight(1f),
+                    enabled = !state.busy,
+                    onClick = { onIntent(BackupIntent.ConnectGoogleDrive) }
+                ) {
+                    Text(text = if (state.connected) "연결 확인" else "연결")
+                }
+                Button(
+                    modifier = Modifier.weight(1f),
+                    enabled = !state.busy,
+                    onClick = { onIntent(BackupIntent.RunManualBackup) }
+                ) {
+                    Text(text = "백업")
+                }
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(SumDiarySpacing.Sm)
+            ) {
+                TextButton(
+                    modifier = Modifier.weight(1f),
+                    enabled = !state.busy,
+                    onClick = { onIntent(BackupIntent.RestoreMerge) }
+                ) {
+                    Text(text = "복구")
+                }
+                TextButton(
+                    modifier = Modifier.weight(1f),
+                    enabled = !state.busy,
+                    onClick = { onIntent(BackupIntent.DeleteRemoteBackup) }
+                ) {
+                    Text(text = "백업 삭제")
+                }
+            }
+        }
+    }
+}
+
+private val BackupUiStatus.label: String
+    get() = when (this) {
+        BackupUiStatus.NotConnected -> "꺼짐"
+        BackupUiStatus.Ready -> "준비"
+        BackupUiStatus.Running -> "진행"
+        BackupUiStatus.Success -> "완료"
+        BackupUiStatus.NeedsConnection -> "연결 필요"
+        BackupUiStatus.Failed -> "확인 필요"
+    }
+
+@Composable
+private fun BackupUiStatus.contentColor() = when (this) {
+    BackupUiStatus.Success,
+    BackupUiStatus.Ready -> MaterialTheme.colorScheme.primary
+    BackupUiStatus.Failed,
+    BackupUiStatus.NeedsConnection -> MaterialTheme.colorScheme.error
+    BackupUiStatus.NotConnected,
+    BackupUiStatus.Running -> MaterialTheme.colorScheme.onSurfaceVariant
+}
+
+@Composable
+private fun BackupUiStatus.borderColor() = when (this) {
+    BackupUiStatus.Failed,
+    BackupUiStatus.NeedsConnection -> MaterialTheme.colorScheme.error
+    else -> MaterialTheme.colorScheme.outline
 }
 
 @Composable
