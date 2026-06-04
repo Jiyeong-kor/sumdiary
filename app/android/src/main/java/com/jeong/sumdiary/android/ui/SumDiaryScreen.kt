@@ -2,6 +2,7 @@ package com.jeong.sumdiary.android.ui
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -68,10 +69,23 @@ fun SumDiaryScreen(container: AppContainer) {
     val summaryViewModel = remember { container.summaryViewModel() }
     val entryState by entryViewModel.state.collectAsState()
     val summaryState by summaryViewModel.state.collectAsState()
+    var firstRunGuideCompleted by remember {
+        mutableStateOf(container.hasCompletedFirstRunGuide())
+    }
     var selectedTab by remember { mutableStateOf(SumDiaryTab.Diary) }
     var showEntryEditor by remember { mutableStateOf(false) }
     val today =
         remember { Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date }
+
+    if (!firstRunGuideCompleted) {
+        FirstRunGuideFlow(
+            onComplete = {
+                container.completeFirstRunGuide()
+                firstRunGuideCompleted = true
+            }
+        )
+        return
+    }
 
     LaunchedEffect(selectedTab) {
         if (selectedTab == SumDiaryTab.Summary) {
@@ -113,7 +127,13 @@ fun SumDiaryScreen(container: AppContainer) {
                 state = summaryState,
                 onIntent = { summaryViewModel.dispatch(it) }
             )
-            SumDiaryTab.Settings -> SettingsTabContent(padding)
+            SumDiaryTab.Settings -> SettingsTabContent(
+                paddingValues = padding,
+                onShowGuide = {
+                    container.resetFirstRunGuide()
+                    firstRunGuideCompleted = false
+                }
+            )
         }
     }
 
@@ -128,6 +148,254 @@ fun SumDiaryScreen(container: AppContainer) {
                 showEntryEditor = false
             }
         )
+    }
+}
+
+@Composable
+private fun FirstRunGuideFlow(onComplete: () -> Unit) {
+    var page by remember { mutableStateOf(0) }
+    var showRequiredNotice by remember { mutableStateOf(false) }
+
+    if (showRequiredNotice) {
+        RequiredNoticeScreen(onComplete = onComplete)
+    } else {
+        AppGuideScreen(
+            page = page,
+            onNext = {
+                if (page < AppGuidePage.entries.lastIndex) {
+                    page += 1
+                } else {
+                    showRequiredNotice = true
+                }
+            },
+            onSkip = { showRequiredNotice = true }
+        )
+    }
+}
+
+private enum class AppGuidePage(
+    val title: String,
+    val description: String,
+    val previewTitle: String,
+    val previewBody: String
+) {
+    Entry(
+        title = "짧게 남기는 하루",
+        description = "생각이 길어지기 전에 빠르게 기록해요.",
+        previewTitle = "오늘의 기록",
+        previewBody = "오후 9:12 · 회의 후 남은 생각을 정리했다"
+    ),
+    Summary(
+        title = "기기 안에서 만드는 요약",
+        description = "기록을 다시 읽기 쉽게 짧게 정리해요.",
+        previewTitle = "기기 안에서 만든 요약",
+        previewBody = "오늘은 정리와 회복이 함께 있던 날이에요."
+    ),
+    Backup(
+        title = "사용자가 켜는 백업",
+        description = "Google Drive 백업은 사용자가 선택한 뒤에만 동작해요.",
+        previewTitle = "Google Drive 백업",
+        previewBody = "암호화된 백업 · 아직 연결되지 않음"
+    ),
+    Security(
+        title = "조용한 보호 설정",
+        description = "생체 인증과 햅틱은 설정에서 직접 조정해요.",
+        previewTitle = "생체 인증",
+        previewBody = "OS 기본 인증 사용 · 꺼짐"
+    )
+}
+
+@Composable
+private fun AppGuideScreen(
+    page: Int,
+    onNext: () -> Unit,
+    onSkip: () -> Unit
+) {
+    val guidePage = AppGuidePage.entries[page]
+
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(SumDiarySpacing.Lg),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
+                TextButton(onClick = onSkip) {
+                    Text(text = "건너뛰기")
+                }
+            }
+            Column(verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.Section)) {
+                Column(verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.Sm)) {
+                    Text(
+                        text = guidePage.title,
+                        style = MaterialTheme.typography.displaySmall
+                    )
+                    Text(
+                        text = guidePage.description,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+                AppGuidePreviewCard(guidePage)
+                PageIndicators(currentPage = page, pageCount = AppGuidePage.entries.size)
+            }
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = onNext
+            ) {
+                Text(text = if (page == AppGuidePage.entries.lastIndex) "고지 확인하기" else "다음")
+            }
+        }
+    }
+}
+
+@Composable
+private fun AppGuidePreviewCard(page: AppGuidePage) {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.large,
+        color = MaterialTheme.colorScheme.surface,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
+    ) {
+        Column(
+            modifier = Modifier.padding(SumDiarySpacing.Xl),
+            verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.Md)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = page.previewTitle,
+                    style = MaterialTheme.typography.titleMedium
+                )
+                StatusDot(label = "Preview")
+            }
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = MaterialTheme.shapes.medium,
+                color = MaterialTheme.colorScheme.surfaceVariant,
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
+            ) {
+                Column(
+                    modifier = Modifier.padding(SumDiarySpacing.Lg),
+                    verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.Sm)
+                ) {
+                    Text(
+                        text = page.previewBody,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outline)
+                    Text(
+                        text = "SumDiary 기본 화면과 같은 디자인을 사용해요.",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.labelMedium
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun PageIndicators(currentPage: Int, pageCount: Int) {
+    Row(horizontalArrangement = Arrangement.spacedBy(SumDiarySpacing.Xs)) {
+        repeat(pageCount) { index ->
+            Box(
+                modifier = Modifier
+                    .size(width = if (currentPage == index) 20.dp else 8.dp, height = 8.dp)
+                    .background(
+                        color = if (currentPage == index) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.outline
+                        },
+                        shape = MaterialTheme.shapes.extraSmall
+                    )
+            )
+        }
+    }
+}
+
+@Composable
+private fun RequiredNoticeScreen(onComplete: () -> Unit) {
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(SumDiarySpacing.Lg),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.Section)) {
+                Column(verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.Sm)) {
+                    Text(
+                        text = "시작 전 확인",
+                        style = MaterialTheme.typography.displaySmall
+                    )
+                    Text(
+                        text = "기능 소개와 별도로 꼭 알아야 할 내용이에요.",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+                Column(verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.Md)) {
+                    NoticeItem(
+                        title = "민감정보가 포함될 수 있어요",
+                        description = "일기에는 건강, 감정, 관계 같은 민감한 내용이 들어갈 수 있어요."
+                    )
+                    NoticeItem(
+                        title = "기록과 요약은 기본적으로 기기 안에서 처리해요",
+                        description = "지원 기기와 OS 조건에 따라 온디바이스 AI 사용 가능 여부가 달라질 수 있어요."
+                    )
+                    NoticeItem(
+                        title = "백업은 사용자가 켠 뒤에만 동작해요",
+                        description = "Google Drive 연결과 암호화 백업은 설정에서 직접 선택해야 해요."
+                    )
+                }
+            }
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = onComplete
+            ) {
+                Text(text = "확인하고 계속")
+            }
+        }
+    }
+}
+
+@Composable
+private fun NoticeItem(title: String, description: String) {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.medium,
+        color = MaterialTheme.colorScheme.surface,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
+    ) {
+        Column(
+            modifier = Modifier.padding(SumDiarySpacing.Lg),
+            verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.Xs)
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium
+            )
+            Text(
+                text = description,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
     }
 }
 
@@ -397,7 +665,10 @@ private fun SummaryPanel(state: SummaryState) {
 }
 
 @Composable
-private fun SettingsTabContent(paddingValues: PaddingValues) {
+private fun SettingsTabContent(
+    paddingValues: PaddingValues,
+    onShowGuide: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -411,14 +682,24 @@ private fun SettingsTabContent(paddingValues: PaddingValues) {
         )
         SettingsRow(title = "Google Drive 백업", description = "사용자가 켠 뒤에만 동작해요")
         SettingsRow(title = "생체 인증", description = "OS 기본 인증을 사용해요")
-        SettingsRow(title = "앱 가이드 다시 보기", description = "첫 실행 안내를 다시 확인해요")
+        SettingsRow(
+            title = "앱 가이드 다시 보기",
+            description = "첫 실행 안내를 다시 확인해요",
+            onClick = onShowGuide
+        )
     }
 }
 
 @Composable
-private fun SettingsRow(title: String, description: String) {
+private fun SettingsRow(
+    title: String,
+    description: String,
+    onClick: (() -> Unit)? = null
+) {
     Surface(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier),
         shape = MaterialTheme.shapes.small,
         color = MaterialTheme.colorScheme.surface,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
