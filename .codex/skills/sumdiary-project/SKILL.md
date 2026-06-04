@@ -15,6 +15,13 @@ description: SumDiary 프로젝트에서 README, 문서, GitHub 이슈/PR, 빌�
 - 이슈와 PR에는 논리적으로 필요한 `type:*`, `area:*` 라벨을 붙인다.
 - 사용자가 직접 만든 변경을 되돌리지 않는다.
 
+## Local And IDE Files
+
+- IDE가 만든 변경은 제품 코드와 섞지 말고 별도 판단한다.
+- `.idea/gradle.xml`처럼 shared 모듈 인식에 필요한 안정적인 프로젝트 설정은 커밋할 수 있다.
+- `.idea/deploymentTargetSelector.xml`처럼 개인 실행 대상, 기기 선택, 창 상태, 로컬 세션 값은 Git 추적에서 제외한다.
+- `.idea` 변경이 남아 있으면 최종 보고 전에 공유 설정인지 로컬 설정인지 구분한다.
+
 ## Warning-Free Quality Gate
 
 - `BUILD SUCCESSFUL`이어도 warning이 있으면 완료로 보지 않는다.

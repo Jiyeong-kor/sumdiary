@@ -18,11 +18,14 @@
             <option value="$PROJECT_DIR$/shared/core-model" />
             <option value="$PROJECT_DIR$/shared/core-util" />
             <option value="$PROJECT_DIR$/shared/data-auth" />
+            <option value="$PROJECT_DIR$/shared/data-backup" />
             <option value="$PROJECT_DIR$/shared/data-diary" />
             <option value="$PROJECT_DIR$/shared/data-summary" />
             <option value="$PROJECT_DIR$/shared/domain-auth" />
+            <option value="$PROJECT_DIR$/shared/domain-backup" />
             <option value="$PROJECT_DIR$/shared/domain-diary" />
             <option value="$PROJECT_DIR$/shared/domain-summary" />
+            <option value="$PROJECT_DIR$/shared/feature-backup" />
             <option value="$PROJECT_DIR$/shared/feature-entry" />
             <option value="$PROJECT_DIR$/shared/feature-summary" />
           </set>
