@@ -19,10 +19,13 @@ class SummaryRepositoryImpl(
 
     private val queries = database.summaryQueries
 
-    override suspend fun summarize(entries: List<DiaryEntry>): Summary {
+    override suspend fun summarize(entries: List<DiaryEntry>): Summary? {
         val periodStart = entries.minOfOrNull { it.date } ?: LocalDate(1970, 1, 1)
         val periodEnd = entries.maxOfOrNull { it.date } ?: periodStart
-        val summaryText = summarizerEngine.run(entries.map { it.content })
+        val summaryText = when (val result = summarizerEngine.run(entries.map { it.content })) {
+            is SummarizerResult.Success -> result.text
+            SummarizerResult.Unsupported -> return null
+        }
         val type = deriveType(periodStart, periodEnd)
         val emotions = deriveEmotions(summaryText)
         withContext(dispatcher) {

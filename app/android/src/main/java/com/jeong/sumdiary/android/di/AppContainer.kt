@@ -5,7 +5,7 @@ import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import com.jeong.sumdiary.core.util.DefaultDispatchersProvider
 import com.jeong.sumdiary.data.diary.DiaryRepositoryImpl
 import com.jeong.sumdiary.data.diary.db.DiaryDatabase
-import com.jeong.sumdiary.data.summary.PlaceholderSummarizerEngine
+import com.jeong.sumdiary.data.summary.PlatformSummarizerProvider
 import com.jeong.sumdiary.data.summary.SummaryRepositoryImpl
 import com.jeong.sumdiary.data.summary.db.SummaryDatabase
 import com.jeong.sumdiary.domain.summary.usecase.GenerateDailySummary
@@ -27,7 +27,7 @@ class AppContainer(context: Context) {
     )
 
     private val diaryRepository = DiaryRepositoryImpl(diaryDatabase, dispatchers.io)
-    private val summarizerEngine = PlaceholderSummarizerEngine()
+    private val summarizerEngine = PlatformSummarizerProvider.create()
     private val summaryRepository = SummaryRepositoryImpl(
         summaryDatabase,
         dispatchers.io,
