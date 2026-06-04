@@ -1,5 +1,8 @@
 package com.jeong.sumdiary.feature.backup
 
+import com.jeong.sumdiary.domain.backup.BackupCloudConnectionResult
+import com.jeong.sumdiary.domain.backup.BackupCloudRepository
+import com.jeong.sumdiary.domain.backup.BackupCloudSessionState
 import com.jeong.sumdiary.domain.backup.BackupDeleteResult
 import com.jeong.sumdiary.domain.backup.BackupPassphrase
 import com.jeong.sumdiary.domain.backup.BackupProvider
@@ -19,10 +22,10 @@ import kotlinx.coroutines.launch
 
 class BackupViewModel(
     provider: BackupProvider,
+    private val cloudRepository: BackupCloudRepository,
     private val runBackup: RunBackup,
     private val restoreBackup: RestoreBackup,
     private val deleteRemoteBackup: DeleteRemoteBackup,
-    private val connectProviderForDevelopment: suspend () -> Unit,
     private val dispatcher: CoroutineDispatcher
 ) {
     private val scope = CoroutineScope(SupervisorJob() + dispatcher)
@@ -41,17 +44,8 @@ class BackupViewModel(
     private fun connect() {
         scope.launch {
             _state.value = _state.value.toRunning("Google Drive 연결 확인 중")
-            runCatching { connectProviderForDevelopment() }
-                .onSuccess {
-                    _state.value = _state.value.copy(
-                        connected = true,
-                        status = BackupUiStatus.Ready,
-                        statusTitle = "Google Drive 준비됨",
-                        statusDescription = "암호화된 백업 파일만 저장할 수 있는 상태예요.",
-                        lastResult = "연결 준비가 완료됐어요.",
-                        busy = false
-                    )
-                }
+            runCatching { cloudRepository.connect() }
+                .onSuccess { result -> _state.value = result.toState(_state.value.providerName) }
                 .onFailure {
                     _state.value = _state.value.toFailure("Google Drive 연결을 확인하지 못했어요.")
                 }
@@ -110,6 +104,30 @@ class BackupViewModel(
         lastResult = message,
         busy = false
     )
+
+    private fun BackupCloudConnectionResult.toState(providerName: String): BackupState =
+        when (this) {
+            is BackupCloudConnectionResult.Connected -> BackupState(
+                providerName = providerName,
+                connected = session.isConnected,
+                status = BackupUiStatus.Ready,
+                statusTitle = "$providerName 준비됨",
+                statusDescription = "앱 전용 Drive 영역에 암호화된 백업 파일만 저장할 수 있어요.",
+                lastResult = "필수 권한 확인 완료",
+                busy = false
+            )
+            is BackupCloudConnectionResult.MissingRequiredScope -> BackupState(
+                providerName = providerName,
+                connected = session.state == BackupCloudSessionState.Connected,
+                status = BackupUiStatus.NeedsConnection,
+                statusTitle = "$providerName 권한 필요",
+                statusDescription = "SumDiary 백업 파일을 저장하려면 앱 전용 Drive 권한이 필요해요.",
+                lastResult = null,
+                busy = false
+            )
+            BackupCloudConnectionResult.Cancelled -> needsConnection(providerName)
+            BackupCloudConnectionResult.Failed -> failed(providerName, "$providerName 연결을 완료하지 못했어요.")
+        }
 
     private fun BackupRunResult.toState(providerName: String): BackupState =
         when (this) {

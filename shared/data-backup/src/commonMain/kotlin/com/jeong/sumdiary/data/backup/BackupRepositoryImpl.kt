@@ -1,6 +1,7 @@
 package com.jeong.sumdiary.data.backup
 
 import com.jeong.sumdiary.domain.backup.BackupCloudRepository
+import com.jeong.sumdiary.domain.backup.BackupCloudSession
 import com.jeong.sumdiary.domain.backup.BackupDecryptResult
 import com.jeong.sumdiary.domain.backup.BackupDeleteResult
 import com.jeong.sumdiary.domain.backup.BackupDownloadResult
@@ -19,6 +20,10 @@ class BackupRepositoryImpl(
     private val cloudRepository: BackupCloudRepository
 ) : BackupRepository {
     override suspend fun runBackup(passphrase: BackupPassphrase): BackupRunResult {
+        if (!cloudRepository.currentSession().canAccessBackupFile()) {
+            return BackupRunResult.NotConnected
+        }
+
         val snapshot = snapshotRepository.buildSnapshot()
         val encryptedFile = backupEncryptor.encrypt(
             snapshot = snapshot,
@@ -40,6 +45,10 @@ class BackupRepositoryImpl(
         passphrase: BackupPassphrase,
         mode: BackupRestoreMode
     ): BackupRestoreResult {
+        if (!cloudRepository.currentSession().canAccessBackupFile()) {
+            return BackupRestoreResult.NotConnected
+        }
+
         val encryptedFile = when (val result = cloudRepository.downloadLatest()) {
             is BackupDownloadResult.Success -> result.file
             BackupDownloadResult.NotConnected -> return BackupRestoreResult.NotConnected
@@ -67,4 +76,7 @@ class BackupRepositoryImpl(
 
     override suspend fun deleteRemoteBackup(): BackupDeleteResult =
         cloudRepository.deleteRemoteFile()
+
+    private fun BackupCloudSession.canAccessBackupFile(): Boolean =
+        isConnected && hasRequiredScope
 }

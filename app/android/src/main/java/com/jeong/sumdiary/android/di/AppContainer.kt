@@ -65,10 +65,10 @@ class AppContainer(context: Context) {
 
     fun backupViewModel(): BackupViewModel = BackupViewModel(
         provider = BackupProvider.GoogleDrive,
+        cloudRepository = backupCloudRepository,
         runBackup = runBackup,
         restoreBackup = restoreBackup,
         deleteRemoteBackup = deleteRemoteBackup,
-        connectProviderForDevelopment = { backupCloudRepository.connectForDevelopment() },
         dispatcher = dispatchers.io
     )
 

@@ -353,6 +353,8 @@ SumDiary는 Google/Dropbox/Apple 계정을 삭제할 수 없다.
 - 앱 기능에 필요한 최소 scope만 요청한다.
 - 전체 Drive 접근 권한은 피한다.
 - 앱 전용 폴더 또는 앱이 생성한 파일 범위 접근을 우선한다.
+- 1차 Google Drive 백업은 앱 전용 데이터 폴더 접근 scope인 `https://www.googleapis.com/auth/drive.appdata`를 우선 사용한다.
+- 사용자 Drive 전체 파일을 읽거나 탐색하는 scope는 1차 출시 범위에서 제외한다.
 - 권한 요청 화면에서 왜 필요한지 앱 안에서 먼저 설명한다.
 
 ### 13.2 토큰 보관

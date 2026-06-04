@@ -1,9 +1,15 @@
 package com.jeong.sumdiary.data.backup
 
 import com.jeong.sumdiary.domain.backup.BackupCloudRepository
+import com.jeong.sumdiary.domain.backup.BackupCloudConnectionResult
+import com.jeong.sumdiary.domain.backup.BackupCloudScope
+import com.jeong.sumdiary.domain.backup.BackupCloudSession
+import com.jeong.sumdiary.domain.backup.BackupCloudSessionState
 import com.jeong.sumdiary.domain.backup.BackupDeleteResult
 import com.jeong.sumdiary.domain.backup.BackupDownloadResult
 import com.jeong.sumdiary.domain.backup.BackupProvider
+import com.jeong.sumdiary.domain.backup.BackupRemoteFile
+import com.jeong.sumdiary.domain.backup.BackupRemoteFolder
 import com.jeong.sumdiary.domain.backup.BackupUploadResult
 import com.jeong.sumdiary.domain.backup.EncryptedBackupFile
 
@@ -14,13 +20,41 @@ class InMemoryBackupCloudRepository(
     private var remoteFile: EncryptedBackupFile? = null
     private var uploadCounter = 0L
 
-    fun connectForDevelopment() {
+    override suspend fun connect(): BackupCloudConnectionResult {
         connected = true
+        return BackupCloudConnectionResult.Connected(currentSession())
     }
 
     fun disconnectForDevelopment() {
         connected = false
     }
+
+    override suspend fun currentSession(): BackupCloudSession =
+        if (connected) {
+            BackupCloudSession(
+                provider = provider,
+                state = BackupCloudSessionState.Connected,
+                grantedScopes = setOf(BackupCloudScope.GoogleDriveAppData),
+                remoteFolder = BackupRemoteFolder(
+                    provider = provider,
+                    id = "appDataFolder",
+                    displayName = "Google Drive appDataFolder"
+                ),
+                remoteFile = remoteFile?.let {
+                    BackupRemoteFile(
+                        provider = provider,
+                        id = "sumdiary-backup-v1",
+                        fileName = it.fileName,
+                        updatedAtEpochMillis = uploadCounter.takeIf { counter -> counter > 0L }
+                    )
+                }
+            )
+        } else {
+            BackupCloudSession(
+                provider = provider,
+                state = BackupCloudSessionState.NotConnected
+            )
+        }
 
     override suspend fun upload(file: EncryptedBackupFile): BackupUploadResult {
         if (!connected) return BackupUploadResult.NotConnected
