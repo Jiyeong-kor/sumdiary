@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 kotlin {
@@ -24,9 +25,16 @@ kotlin {
             dependencies {
                 implementation(project(":shared:domain-backup"))
                 implementation(libs.coroutines.core)
+                implementation(libs.datetime)
+                implementation(libs.serialization.json)
             }
         }
-        val commonTest by getting
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+                implementation(libs.coroutines.test)
+            }
+        }
     }
 }
 

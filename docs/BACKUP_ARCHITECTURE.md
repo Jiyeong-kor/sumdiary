@@ -237,6 +237,9 @@ sumdiary-backup-v1.sdbak
 - 외부 클라우드 제공자는 평문 내용을 볼 수 없어야 한다.
 - SumDiary는 자체 서버가 없으므로 서버 관리 키를 사용하지 않는다.
 - 1차 출시 암호화 정책은 사용자 키 기반 E2EE로 확정한다.
+- Android 백업 암호화 구현은 PBKDF2-HMAC-SHA256으로 파생한 256-bit 키와 AES-GCM을 사용한다.
+- 백업 payload는 JSON snapshot을 bytes로 직렬화한 뒤 암호화하며, 외부 클라우드에는 Base64 암호문만 저장한다.
+- 개발용 fake 암호화 구현은 출시 경로에서 사용하지 않는다.
 
 ### 10.2 키 방식
 

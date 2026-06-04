@@ -4,7 +4,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 
-fun LocalDate.displayText(): String = "%04d-%02d-%02d".format(year, monthNumber, dayOfMonth)
+fun LocalDate.displayText(): String = "%04d-%02d-%02d".format(year, month.ordinal + 1, day)
 
 fun LocalTime.displayText(): String = "%02d:%02d".format(hour, minute)
 

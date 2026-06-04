@@ -3,10 +3,11 @@ package com.jeong.sumdiary.android.di
 import android.content.Context
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import com.jeong.sumdiary.core.util.DefaultDispatchersProvider
+import com.jeong.sumdiary.data.backup.AndroidBackupCipher
 import com.jeong.sumdiary.data.backup.BackupRepositoryImpl
 import com.jeong.sumdiary.data.backup.DevelopmentBackupSnapshotRepository
-import com.jeong.sumdiary.data.backup.FakeBackupEncryptor
 import com.jeong.sumdiary.data.backup.InMemoryBackupCloudRepository
+import com.jeong.sumdiary.data.backup.RealBackupEncryptor
 import com.jeong.sumdiary.data.diary.DiaryRepositoryImpl
 import com.jeong.sumdiary.data.diary.db.DiaryDatabase
 import com.jeong.sumdiary.data.summary.PlatformSummarizerProvider
@@ -48,7 +49,7 @@ class AppContainer(context: Context) {
     private val backupCloudRepository = InMemoryBackupCloudRepository()
     private val backupRepository = BackupRepositoryImpl(
         snapshotRepository = DevelopmentBackupSnapshotRepository(),
-        backupEncryptor = FakeBackupEncryptor(),
+        backupEncryptor = RealBackupEncryptor(AndroidBackupCipher()),
         cloudRepository = backupCloudRepository
     )
     private val runBackup = RunBackup(backupRepository)
