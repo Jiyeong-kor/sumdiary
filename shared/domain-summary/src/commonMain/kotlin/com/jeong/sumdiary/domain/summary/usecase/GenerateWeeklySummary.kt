@@ -23,6 +23,10 @@ class GenerateWeeklySummary(
             )
         }
         val summary = summaryRepository.summarize(entries)
+            ?: return SummaryGenerationResult.Unsupported(
+                periodStart = periodStart,
+                periodEnd = periodEnd
+            )
         return SummaryGenerationResult.Success(
             summary.copy(
                 type = SummaryType.WEEKLY,

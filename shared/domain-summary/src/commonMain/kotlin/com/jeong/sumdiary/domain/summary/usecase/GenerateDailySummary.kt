@@ -19,6 +19,10 @@ class GenerateDailySummary(
             )
         }
         val summary = summaryRepository.summarize(entries)
+            ?: return SummaryGenerationResult.Unsupported(
+                periodStart = date,
+                periodEnd = date
+            )
         return SummaryGenerationResult.Success(
             summary.copy(
                 type = SummaryType.DAILY,
