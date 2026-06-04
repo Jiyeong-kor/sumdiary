@@ -74,6 +74,7 @@ fun SumDiaryScreen(container: AppContainer) {
     }
     var selectedTab by remember { mutableStateOf(SumDiaryTab.Diary) }
     var showEntryEditor by remember { mutableStateOf(false) }
+    var pendingDeleteEntryId by remember { mutableStateOf<String?>(null) }
     val today =
         remember { Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date }
 
@@ -104,7 +105,10 @@ fun SumDiaryScreen(container: AppContainer) {
         floatingActionButton = {
             if (selectedTab == SumDiaryTab.Diary) {
                 FloatingActionButton(
-                    onClick = { showEntryEditor = true },
+                    onClick = {
+                        entryViewModel.dispatch(EntryIntent.CancelEdit)
+                        showEntryEditor = true
+                    },
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary
                 ) {
@@ -120,7 +124,14 @@ fun SumDiaryScreen(container: AppContainer) {
             SumDiaryTab.Diary -> DiaryTabContent(
                 paddingValues = padding,
                 state = entryState,
-                onCreateEntry = { showEntryEditor = true }
+                onCreateEntry = {
+                    entryViewModel.dispatch(EntryIntent.CancelEdit)
+                    showEntryEditor = true
+                },
+                onEditEntry = { entry ->
+                    entryViewModel.dispatch(EntryIntent.StartEdit(entry))
+                    showEntryEditor = true
+                }
             )
             SumDiaryTab.Summary -> SummaryTabContent(
                 paddingValues = padding,
@@ -140,11 +151,29 @@ fun SumDiaryScreen(container: AppContainer) {
     if (showEntryEditor) {
         EntryEditorDialog(
             text = entryState.text,
+            editing = entryState.editingEntryId != null,
             saving = entryState.saving,
             onTextChange = { entryViewModel.dispatch(EntryIntent.EditText(it)) },
-            onDismiss = { showEntryEditor = false },
+            onDismiss = {
+                entryViewModel.dispatch(EntryIntent.CancelEdit)
+                showEntryEditor = false
+            },
             onSave = {
                 entryViewModel.dispatch(EntryIntent.Save)
+                showEntryEditor = false
+            },
+            onDelete = {
+                pendingDeleteEntryId = entryState.editingEntryId
+            }
+        )
+    }
+
+    if (pendingDeleteEntryId != null) {
+        DeleteEntryDialog(
+            onDismiss = { pendingDeleteEntryId = null },
+            onConfirm = {
+                pendingDeleteEntryId?.let { entryViewModel.dispatch(EntryIntent.Delete(it)) }
+                pendingDeleteEntryId = null
                 showEntryEditor = false
             }
         )
@@ -488,7 +517,8 @@ private fun StatusDot(label: String) {
 private fun DiaryTabContent(
     paddingValues: PaddingValues,
     state: EntryState,
-    onCreateEntry: () -> Unit
+    onCreateEntry: () -> Unit,
+    onEditEntry: (DiaryEntry) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -509,7 +539,10 @@ private fun DiaryTabContent(
             }
         } else {
             items(state.entries, key = { it.id }) { entry ->
-                DiaryEntryItem(entry)
+                DiaryEntryItem(
+                    entry = entry,
+                    onClick = { onEditEntry(entry) }
+                )
             }
         }
     }
@@ -550,9 +583,14 @@ private fun EmptyDiaryCard(onCreateEntry: () -> Unit) {
 }
 
 @Composable
-private fun DiaryEntryItem(entry: DiaryEntry) {
+private fun DiaryEntryItem(
+    entry: DiaryEntry,
+    onClick: () -> Unit
+) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
@@ -739,10 +777,12 @@ private fun ScreenSectionHeader(title: String, description: String) {
 @Composable
 private fun EntryEditorDialog(
     text: String,
+    editing: Boolean,
     saving: Boolean,
     onTextChange: (String) -> Unit,
     onDismiss: () -> Unit,
-    onSave: () -> Unit
+    onSave: () -> Unit,
+    onDelete: () -> Unit
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -755,12 +795,22 @@ private fun EntryEditorDialog(
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(text = "취소")
+            Row {
+                if (editing) {
+                    TextButton(onClick = onDelete) {
+                        Text(
+                            text = "삭제",
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                }
+                TextButton(onClick = onDismiss) {
+                    Text(text = "취소")
+                }
             }
         },
         title = {
-            Text(text = "새 일기")
+            Text(text = if (editing) "일기 수정" else "새 일기")
         },
         text = {
             Column(
@@ -768,7 +818,11 @@ private fun EntryEditorDialog(
                 verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.Sm)
             ) {
                 Text(
-                    text = "오늘 기억할 문장만 짧게 남겨도 좋아요.",
+                    text = if (editing) {
+                        "수정 중 뒤로 가면 변경사항은 저장되지 않아요."
+                    } else {
+                        "오늘 기억할 문장만 짧게 남겨도 좋아요."
+                    },
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium
                 )
@@ -782,6 +836,39 @@ private fun EntryEditorDialog(
                     textStyle = MaterialTheme.typography.bodyLarge
                 )
             }
+        }
+    )
+}
+
+@Composable
+private fun DeleteEntryDialog(
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(onClick = onConfirm) {
+                Text(
+                    text = "삭제",
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(text = "취소")
+            }
+        },
+        title = {
+            Text(text = "일기를 삭제할까요?")
+        },
+        text = {
+            Text(
+                text = "이 작업은 로컬에 저장된 일기를 삭제해요. 백업이 켜져 있다면 다음 백업에서 삭제 상태가 반영될 수 있어요.",
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium
+            )
         }
     )
 }

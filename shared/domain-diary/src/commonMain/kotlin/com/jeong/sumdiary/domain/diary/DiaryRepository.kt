@@ -5,6 +5,7 @@ import kotlinx.datetime.LocalDate
 
 interface DiaryRepository {
     suspend fun upsert(entry: DiaryEntry)
+    suspend fun deleteById(id: String)
     suspend fun getByDate(date: LocalDate): List<DiaryEntry>
     fun observeRange(from: LocalDate, to: LocalDate): Flow<List<DiaryEntry>>
 }
