@@ -56,6 +56,11 @@ tasks.register("checkReleaseReadiness") {
             token = "UnconfiguredGoogleDriveBackupCloudRepository",
             message = "Android release path still uses an unconfigured Google Drive backup cloud repository."
         )
+        requireNoToken(
+            path = "app/android/src/main/java/com/jeong/sumdiary/android/di/AppContainer.kt",
+            token = "UnavailableGoogleDriveAccessTokenProvider",
+            message = "Android release path still has no Google Drive OAuth access token provider."
+        )
         requireGradleProperty(
             name = "sumdiary.googleDriveOAuthClientId",
             message = "Google Drive OAuth client id Gradle property is missing."
