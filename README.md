@@ -170,3 +170,4 @@ Refs #27
 - [Store Submission Checklist](docs/STORE_SUBMISSION_CHECKLIST.md)
 - [Google Play Data Safety Draft](docs/PLAY_DATA_SAFETY_DRAFT.md)
 - [App Store Privacy Draft](docs/APP_STORE_PRIVACY_DRAFT.md)
+- [Store Content Rating Draft](docs/CONTENT_RATING_DRAFT.md)

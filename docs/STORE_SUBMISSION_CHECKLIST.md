@@ -29,7 +29,8 @@
 - [x] Android manifest 권한 최소화 확인: Google Drive OAuth/API 통신용 `INTERNET`만 선언
 - [x] Google Play Data safety 답변 초안 작성
 - [ ] Google Play Data safety 답변 최종 제출값 확인
-- [ ] 콘텐츠 등급 설문 작성
+- [x] 콘텐츠 등급 설문 초안 작성
+- [ ] 콘텐츠 등급 설문 최종 제출값 확인
 - [ ] 개인정보처리방침 URL 등록
 
 ## 3. iOS 제출 준비
