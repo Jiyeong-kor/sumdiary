@@ -1,6 +1,8 @@
 .gradle/
 /.idea/
 /local.properties
+.env
+.env.*
 .DS_Store
 /build/
 **/build/
@@ -9,6 +11,11 @@
 *.kts~
 *.jks
 *.keystore
+*.p8
+*.p12
+*.mobileprovision
+google-services.json
+GoogleService-Info.plist
 .kotlin/**
 # Android
 captures/
@@ -18,5 +25,6 @@ DerivedData/
 *.xcworkspace/
 *.xcuserdata/
 app/iosApp/Config/SumDiary.local.xcconfig
+app/iosApp/Config/*.local.xcconfig
 # Kotlin/Native
 .korge/
