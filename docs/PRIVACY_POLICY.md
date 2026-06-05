@@ -26,7 +26,8 @@ SumDiary는 개인 일기 앱으로, 사용자가 직접 입력한 일기와 앱
 
 - 일기 원문은 요약 목적으로 외부 AI 서버로 전송하지 않는 것을 원칙으로 한다.
 - 온디바이스 요약 엔진이 지원되지 않는 기기에서는 자동 클라우드 AI fallback을 실행하지 않는다.
-- 현재 코드의 기본 요약 엔진은 미지원 상태를 반환하며, 실제 온디바이스 AI SDK 연동 전에는 출시 준비 완료로 보지 않는다.
+- Android 앱은 ML Kit GenAI Summarization API 기반 온디바이스 요약 provider를 사용하도록 준비한다. 이 API는 Android AICore/Gemini Nano 기반으로 동작하며, 지원되지 않는 기기에서는 자동 클라우드 AI fallback을 실행하지 않는다.
+- iOS 앱은 SwiftUI shell에서 Apple Foundation Models 기반 온디바이스 요약 provider를 KMP 요약 엔진에 주입한다. Foundation Models가 지원되지 않거나 Apple Intelligence가 준비되지 않은 기기에서는 자동 클라우드 AI fallback을 실행하지 않는다.
 
 ## 3. 백업 데이터 처리
 
@@ -45,8 +46,8 @@ SumDiary는 개인 일기 앱으로, 사용자가 직접 입력한 일기와 앱
 - 사용 목적: 사용자가 선택한 암호화 백업 파일 저장과 삭제
 - 우선 검토 scope: `https://www.googleapis.com/auth/drive.appdata`
 - 출시 전 필요: OAuth consent screen, scope 검토표, 검증 필요 여부 확인, 사용자에게 연결 해제와 백업 삭제 방법 안내
-- Android 빌드 설정: 제출 전 `sumdiary.googleDriveOAuthClientId` Gradle property를 실제 OAuth client id로 설정해야 한다.
-- iOS 빌드 설정: 제출 전 Xcode build setting의 `GOOGLE_DRIVE_IOS_CLIENT_ID`와 `GOOGLE_DRIVE_IOS_REVERSED_CLIENT_ID`를 실제 iOS OAuth client 값으로 설정해야 한다.
+- Android 빌드 설정: 제출 전 `sumdiary.googleDriveOAuthClientId` Gradle property를 실제 OAuth client id로 설정해야 한다. Android manifest 권한은 Google Drive OAuth/API 통신에 필요한 `INTERNET`만 추가한다.
+- iOS 빌드 설정: 제출 전 `app/iosApp/Config/SumDiary.local.xcconfig`의 `GOOGLE_DRIVE_IOS_CLIENT_ID`, `GOOGLE_DRIVE_IOS_REVERSED_CLIENT_ID`, `SUMDIARY_IOS_DEVELOPMENT_TEAM`을 실제 iOS OAuth client와 Apple Developer Team 값으로 설정해야 한다. 이 파일은 Git에 커밋하지 않는다.
 - 구현 상태: Android는 Google Identity Services 기반 OAuth access token provider와 Google Drive `appDataFolder` 업로드, 다운로드, 삭제 API client를 코드에 포함한다. iOS는 GoogleSignIn 기반 provider와 callback hook을 포함하지만, macOS/Xcode archive 검증과 실제 OAuth client 설정은 남아 있다.
 
 ### 분석 및 오류 수집 SDK
@@ -79,4 +80,5 @@ SumDiary의 1차 출시 대상은 일반 사용자이며, 아동을 주 대상�
 - 문의 이메일 또는 운영자 연락처
 - App Store App Privacy 답변
 - Google Play Data safety 답변
-- 실제 온디바이스 AI SDK와 제3자 SDK 목록
+- Android ML Kit GenAI와 iOS Foundation Models 지원 기기 검증 결과
+- 실제 온디바이스 AI SDK와 제3자 SDK 목록 및 버전

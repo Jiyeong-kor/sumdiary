@@ -461,3 +461,5 @@ SumDiary는 Google/Dropbox/Apple 계정을 삭제할 수 없다.
 - 백업 비밀번호를 기본 복구 수단으로 확정하고, 복구 문구는 고급 옵션 또는 후속 기능으로 둘지 결정한다.
 - 자동 백업 주기와 Wi-Fi 전용 옵션을 결정한다.
 - 백업 파일 버전 migration 정책을 상세화한다.
+- Android ML Kit GenAI 요약 provider의 지원 기기/미지원 기기 UX를 실제 기기에서 검증한다.
+- iOS Apple Foundation Models 요약 provider를 연결하고 Xcode 26 이상 환경에서 archive를 검증한다.

@@ -125,13 +125,16 @@ Refs #27
 - SQLDelight 기반 백업 snapshot과 Android 백업 암호화 구현
 - Google Drive appDataFolder 업로드/다운로드/삭제 API client
 - Android Google Drive OAuth access token provider
+- Android ML Kit GenAI 요약 provider
+- iOS Apple Foundation Models 요약 provider 주입 경계와 Swift provider
+- iOS GoogleSignIn 기반 Google Drive OAuth provider와 URL callback hook
 - 백업 설정 상태 UI와 백업 비밀번호 입력 UX
 - README 구조와 warning-free 프로젝트 규칙
 
 ### 진행 중
 
-- iOS Google Drive OAuth access token provider 연동
-- 실제 Android/iOS 온디바이스 AI SDK 연동
+- Android/iOS 온디바이스 AI 지원 기기와 미지원 기기 UX 실기기 검증
+- iOS Xcode 26 이상 archive 검증
 - 생체 인증 기반 앱 잠금과 백업 키 접근 승인
 - 복구 방식 선택과 충돌 처리 UX
 
@@ -140,7 +143,9 @@ Refs #27
 - 개인정보처리방침
 - 이용약관
 - Android release signing 설정
-- Google Drive OAuth client id 설정, scope 검토와 필요 시 Google 검증
+- Android Google Drive OAuth client id Gradle property 설정
+- iOS `app/iosApp/Config/SumDiary.local.xcconfig`에 Google Drive OAuth client id와 reversed URL scheme 설정
+- Google Drive OAuth scope 검토와 필요 시 Google 검증
 - App Store / Google Play privacy form과 data safety 답변
 - 실제 기기 테스트와 미지원 기기 UX 검증
 - Android와 iOS 양쪽 출시 빌드 검증
@@ -156,6 +161,9 @@ Refs #27
 - [CI Plan](docs/CI_PLAN.md)
 - [Git Workflow](docs/GIT_WORKFLOW.md)
 - [UI Delivery Plan](docs/UI_DELIVERY_PLAN.md)
+- [Release Configuration](docs/RELEASE_CONFIGURATION.md)
 - [Privacy Policy](docs/PRIVACY_POLICY.md)
 - [Terms of Use](docs/TERMS_OF_USE.md)
 - [Store Submission Checklist](docs/STORE_SUBMISSION_CHECKLIST.md)
+- [Google Play Data Safety Draft](docs/PLAY_DATA_SAFETY_DRAFT.md)
+- [App Store Privacy Draft](docs/APP_STORE_PRIVACY_DRAFT.md)

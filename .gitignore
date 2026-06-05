@@ -17,5 +17,6 @@ captures/
 DerivedData/
 *.xcworkspace/
 *.xcuserdata/
+app/iosApp/Config/SumDiary.local.xcconfig
 # Kotlin/Native
 .korge/
