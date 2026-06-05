@@ -12,7 +12,7 @@ struct GoogleDriveAuthorization {
 
 @MainActor
 final class GoogleDriveAuthorizationProvider {
-    static let driveAppDataScope = "https://www.googleapis.com/auth/drive.appdata"
+    nonisolated static let driveAppDataScope = "https://www.googleapis.com/auth/drive.appdata"
 
     func handleOpenURL(_ url: URL) -> Bool {
         GIDSignIn.sharedInstance.handle(url)

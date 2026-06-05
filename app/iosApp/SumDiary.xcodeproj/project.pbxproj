@@ -25,6 +25,7 @@
 		0A0002010000000000000006 /* SumDiary.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SumDiary.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A0002010000000000000007 /* GoogleDriveAuthorizationProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleDriveAuthorizationProvider.swift; sourceTree = "<group>"; };
 		0A0002010000000000000008 /* FoundationModelsSummarizerProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoundationModelsSummarizerProvider.swift; sourceTree = "<group>"; };
+		0A0002010000000000000009 /* SumDiary.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config/SumDiary.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -43,6 +44,7 @@
 		0A0004010000000000000001 = {
 			isa = PBXGroup;
 			children = (
+				0A0002010000000000000009 /* SumDiary.xcconfig */,
 				0A0004010000000000000002 /* SumDiary */,
 				0A0004010000000000000003 /* Frameworks */,
 				0A0004010000000000000004 /* Products */,
@@ -189,19 +191,18 @@
 /* Begin XCBuildConfiguration section */
 		0A000B010000000000000001 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0A0002010000000000000009 /* SumDiary.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = "$(SUMDIARY_IOS_DEVELOPMENT_TEAM)";
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)",
 				);
 				GENERATE_INFOPLIST_FILE = NO;
-				GOOGLE_DRIVE_IOS_CLIENT_ID = "";
-				GOOGLE_DRIVE_IOS_REVERSED_CLIENT_ID = "";
 				INFOPLIST_FILE = SumDiary/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -209,7 +210,12 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-lsqlite3",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.jeong.sumdiary;
+				PRODUCT_MODULE_NAME = SumDiaryApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -220,19 +226,18 @@
 		};
 		0A000B010000000000000002 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0A0002010000000000000009 /* SumDiary.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = "$(SUMDIARY_IOS_DEVELOPMENT_TEAM)";
 				ENABLE_PREVIEWS = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)",
 				);
 				GENERATE_INFOPLIST_FILE = NO;
-				GOOGLE_DRIVE_IOS_CLIENT_ID = "";
-				GOOGLE_DRIVE_IOS_REVERSED_CLIENT_ID = "";
 				INFOPLIST_FILE = SumDiary/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -240,7 +245,12 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-lsqlite3",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.jeong.sumdiary;
+				PRODUCT_MODULE_NAME = SumDiaryApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;

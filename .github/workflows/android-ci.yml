@@ -4,6 +4,8 @@ on:
   pull_request:
     branches:
       - master
+      - "feature/**"
+      - "chore/**"
     paths-ignore:
       - "docs/**"
       - "**/*.md"
@@ -113,3 +115,16 @@ jobs:
 
       - name: Compile iOS simulator framework
         run: ./gradlew :app:ios:compileKotlinIosSimulatorArm64 --build-cache --parallel --stacktrace --warning-mode all
+
+      - name: Build iOS SwiftUI shell
+        run: >
+          xcodebuild
+          -project app/iosApp/SumDiary.xcodeproj
+          -scheme SumDiary
+          -configuration Debug
+          -sdk iphonesimulator
+          -destination 'generic/platform=iOS Simulator'
+          ARCHS=arm64
+          ONLY_ACTIVE_ARCH=YES
+          CODE_SIGNING_ALLOWED=NO
+          build
