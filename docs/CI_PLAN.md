@@ -33,6 +33,7 @@
 - Android release build signing 전 단계 검증
 - 백업 암호화 unit test
 - iOS simulator arm64 framework compile
+- iOS SwiftUI shell simulator build
 
 현재 workflow 명령:
 
@@ -44,19 +45,26 @@
 ./gradlew :shared:data-summary:testDebugUnitTest --build-cache --parallel --stacktrace --warning-mode all
 ./gradlew checkReleaseReadiness --build-cache --parallel --stacktrace --warning-mode all
 ./gradlew :app:ios:compileKotlinIosSimulatorArm64 --build-cache --parallel --stacktrace --warning-mode all
+xcodebuild -project app/iosApp/SumDiary.xcodeproj -target SumDiary -configuration Debug -sdk iphonesimulator CODE_SIGNING_ALLOWED=NO build
 ```
 
 shared metadata compile은 전체 shared 모듈을 대상으로 실행한다.
 스토어 제출 직전에는 다음 strict mode도 통과해야 한다.
 
 ```text
+./gradlew writeIosReleaseLocalConfig \
+  -Psumdiary.ios.googleDriveOAuthClientId=<ios-client-id> \
+  -Psumdiary.ios.googleDriveOAuthReversedClientId=<ios-reversed-client-id>
+
 ./gradlew checkReleaseReadiness \
   -Psumdiary.releaseReadiness.strict=true \
   -Psumdiary.googleDriveOAuthClientId=<client-id> \
   -Psumdiary.android.signing.storeFile=<keystore-path> \
   -Psumdiary.android.signing.storePassword=<store-password> \
   -Psumdiary.android.signing.keyAlias=<key-alias> \
-  -Psumdiary.android.signing.keyPassword=<key-password>
+  -Psumdiary.android.signing.keyPassword=<key-password> \
+  -Psumdiary.ios.googleDriveOAuthClientId=<ios-client-id> \
+  -Psumdiary.ios.googleDriveOAuthReversedClientId=<ios-reversed-client-id>
 ```
 
 ## 3.1 캐시 최적화 전략
@@ -67,7 +75,7 @@ shared metadata compile은 전체 shared 모듈을 대상으로 실행한다.
 - `gradle-home-cache-cleanup`을 켜서 오래된 cache 항목으로 인한 용량 증가를 줄인다.
 - workflow concurrency를 설정해 같은 브랜치의 이전 실행을 자동 취소한다.
 - Gradle 실행에는 `--build-cache`와 `--parallel`을 사용한다.
-- iOS/macOS CI는 비용과 속도 부담이 있으므로 KMP framework compile을 우선 검증하고, SwiftUI 앱 archive 빌드는 별도 확장한다.
+- iOS/macOS CI는 비용과 속도 부담이 있으므로 PR에서는 KMP framework compile과 SwiftUI simulator build를 검증하고, SwiftUI 앱 archive 빌드는 별도 확장한다.
 
 ## 4. 2차 CI 범위
 

@@ -11,6 +11,48 @@ plugins {
     alias(libs.plugins.sqldelight) apply false
 }
 
+tasks.register("writeIosReleaseLocalConfig") {
+    group = "release"
+    description = "Writes the ignored iOS local xcconfig from Gradle release properties."
+
+    val iosClientId = providers.gradleProperty("sumdiary.ios.googleDriveOAuthClientId")
+    val iosReversedClientId = providers.gradleProperty("sumdiary.ios.googleDriveOAuthReversedClientId")
+    val iosDevelopmentTeam = providers.gradleProperty("sumdiary.ios.developmentTeam")
+    val outputFile = layout.projectDirectory.file("app/iosApp/Config/SumDiary.local.xcconfig")
+
+    inputs.property("iosClientId", iosClientId.orElse(""))
+    inputs.property("iosReversedClientId", iosReversedClientId.orElse(""))
+    inputs.property("iosDevelopmentTeam", iosDevelopmentTeam.orElse(""))
+    outputs.file(outputFile)
+
+    doLast {
+        val clientId = iosClientId.orElse("").get().trim()
+        val reversedClientId = iosReversedClientId.orElse("").get().trim()
+        val developmentTeam = iosDevelopmentTeam.orElse("").get().trim()
+
+        if (clientId.isBlank()) {
+            throw GradleException("Missing Gradle property: sumdiary.ios.googleDriveOAuthClientId")
+        }
+        if (reversedClientId.isBlank()) {
+            throw GradleException("Missing Gradle property: sumdiary.ios.googleDriveOAuthReversedClientId")
+        }
+        if (developmentTeam.isBlank()) {
+            throw GradleException("Missing Gradle property: sumdiary.ios.developmentTeam")
+        }
+
+        val file = outputFile.asFile
+        file.parentFile.mkdirs()
+        file.writeText(
+            """
+            GOOGLE_DRIVE_IOS_CLIENT_ID = $clientId
+            GOOGLE_DRIVE_IOS_REVERSED_CLIENT_ID = $reversedClientId
+            SUMDIARY_IOS_DEVELOPMENT_TEAM = $developmentTeam
+            """.trimIndent() + System.lineSeparator()
+        )
+        logger.lifecycle("Wrote ${file.relativeTo(layout.projectDirectory.asFile).invariantSeparatorsPath}")
+    }
+}
+
 tasks.register("checkReleaseReadiness") {
     group = "verification"
     description = "Audits release blockers that must be cleared before store submission."
@@ -81,6 +123,18 @@ tasks.register("checkReleaseReadiness") {
             name = "sumdiary.android.signing.keyPassword",
             message = "Android release signing keyPassword Gradle property is missing."
         )
+        requireGradleProperty(
+            name = "sumdiary.ios.googleDriveOAuthClientId",
+            message = "iOS Google Drive OAuth client id Gradle property is missing."
+        )
+        requireGradleProperty(
+            name = "sumdiary.ios.googleDriveOAuthReversedClientId",
+            message = "iOS Google Drive reversed client id Gradle property is missing."
+        )
+        requireGradleProperty(
+            name = "sumdiary.ios.developmentTeam",
+            message = "iOS Apple Developer Team ID Gradle property is missing."
+        )
         requireNoToken(
             path = "app/android/src/main/java/com/jeong/sumdiary/android/di/AppContainer.kt",
             token = "DevelopmentBackupSnapshotRepository",
@@ -92,9 +146,14 @@ tasks.register("checkReleaseReadiness") {
             message = "Default summarizer provider still returns the unsupported placeholder engine."
         )
         requireNoToken(
-            path = "shared/data-summary/src/commonMain/kotlin/com/jeong/sumdiary/data/summary/PlatformSummarizerProvider.kt",
-            token = "LocalSummarizerEngine",
-            message = "Default summarizer provider still uses the local fallback instead of platform on-device AI SDKs."
+            path = "app/android/src/main/java/com/jeong/sumdiary/android/di/AppContainer.kt",
+            token = "PlatformSummarizerProvider.create()",
+            message = "Android release path still uses the shared local summarizer fallback instead of ML Kit GenAI."
+        )
+        requireNoToken(
+            path = "app/ios/src/commonMain/kotlin/com/jeong/sumdiary/ios/IosAppFactory.kt",
+            token = "PlatformSummarizerProvider.create()",
+            message = "iOS release path still uses the shared local summarizer fallback instead of Apple Foundation Models."
         )
         requireFile(
             path = "docs/PRIVACY_POLICY.md",
@@ -109,6 +168,14 @@ tasks.register("checkReleaseReadiness") {
             message = "Store submission checklist is missing."
         )
         requireFile(
+            path = "docs/PLAY_DATA_SAFETY_DRAFT.md",
+            message = "Google Play Data safety draft is missing."
+        )
+        requireFile(
+            path = "docs/APP_STORE_PRIVACY_DRAFT.md",
+            message = "App Store privacy draft is missing."
+        )
+        requireFile(
             path = "app/iosApp/SumDiary.xcodeproj/project.pbxproj",
             message = "iOS Xcode app project is missing."
         )
@@ -116,15 +183,9 @@ tasks.register("checkReleaseReadiness") {
             path = "app/iosApp/SumDiary/GoogleDriveAuthorizationProvider.swift",
             message = "iOS Google Drive OAuth access token provider is missing."
         )
-        requireNoToken(
-            path = "app/iosApp/SumDiary.xcodeproj/project.pbxproj",
-            token = "GOOGLE_DRIVE_IOS_CLIENT_ID = \"\";",
-            message = "iOS Google Drive OAuth client id Xcode build setting is missing."
-        )
-        requireNoToken(
-            path = "app/iosApp/SumDiary.xcodeproj/project.pbxproj",
-            token = "GOOGLE_DRIVE_IOS_REVERSED_CLIENT_ID = \"\";",
-            message = "iOS Google Drive reversed client id URL scheme Xcode build setting is missing."
+        requireFile(
+            path = "app/iosApp/Config/SumDiary.xcconfig",
+            message = "iOS Xcode build configuration file is missing."
         )
 
         if (blockers.isEmpty()) {

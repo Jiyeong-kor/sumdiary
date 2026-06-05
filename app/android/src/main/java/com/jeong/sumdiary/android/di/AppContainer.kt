@@ -14,7 +14,7 @@ import com.jeong.sumdiary.data.backup.RealBackupEncryptor
 import com.jeong.sumdiary.android.R
 import com.jeong.sumdiary.data.diary.DiaryRepositoryImpl
 import com.jeong.sumdiary.data.diary.db.DiaryDatabase
-import com.jeong.sumdiary.data.summary.PlatformSummarizerProvider
+import com.jeong.sumdiary.data.summary.AndroidMlKitSummarizerEngine
 import com.jeong.sumdiary.data.summary.SummaryRepositoryImpl
 import com.jeong.sumdiary.data.summary.db.SummaryDatabase
 import com.jeong.sumdiary.domain.backup.BackupProvider
@@ -45,7 +45,7 @@ class AppContainer @Inject constructor(
     )
 
     private val diaryRepository = DiaryRepositoryImpl(diaryDatabase, dispatchers.io)
-    private val summarizerEngine = PlatformSummarizerProvider.create()
+    private val summarizerEngine = AndroidMlKitSummarizerEngine(context)
     private val summaryRepository = SummaryRepositoryImpl(
         summaryDatabase,
         dispatchers.io,
