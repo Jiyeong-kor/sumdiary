@@ -16,9 +16,15 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertIs
 
+private const val SafePassphraseValue = "backup-passphrase-sentinel-2026"
+private const val DiaryContentSentinel = "diary-plain-content-sentinel-2026"
+private const val SummaryTextSentinel = "summary-plain-text-sentinel-2026"
+private const val OAuthTokenSentinel = "ya29.oauth-token-sentinel-2026"
+private const val RawKeySentinel = "raw-derived-key-sentinel-2026"
+
 @OptIn(ExperimentalEncodingApi::class)
 class RealBackupEncryptorTest {
-    private val passphrase = BackupPassphrase("safe backup passphrase")
+    private val passphrase = BackupPassphrase(SafePassphraseValue)
     private val snapshot = BackupSnapshot(
         createdAtEpochMillis = 1234L,
         entries = listOf(
@@ -26,7 +32,7 @@ class RealBackupEncryptorTest {
                 id = "entry-1",
                 date = LocalDate(2026, 6, 4),
                 time = LocalTime(9, 30),
-                content = "오늘은 백업 암호화를 구현했다."
+                content = DiaryContentSentinel
             )
         ),
         summaries = listOf(
@@ -34,7 +40,7 @@ class RealBackupEncryptorTest {
                 type = SummaryType.DAILY,
                 periodStart = LocalDate(2026, 6, 4),
                 periodEnd = LocalDate(2026, 6, 4),
-                text = "백업 암호화 구현",
+                text = SummaryTextSentinel,
                 emotions = listOf("차분함")
             )
         ),
@@ -53,6 +59,29 @@ class RealBackupEncryptorTest {
         requireNotNull(file)
         assertFalse(file.encryptedPayloadBase64.startsWith("fake-encrypted"))
         assertFalse(Base64.decode(file.encryptedPayloadBase64).decodeToString().contains(snapshot.entries.first().content))
+    }
+
+    @Test
+    fun encryptedBackupFileDoesNotExposeSensitiveValues() = runTest {
+        val encryptor = RealBackupEncryptor(TestBackupCipher())
+
+        val file = requireNotNull(encryptor.encrypt(snapshot, passphrase))
+        val exposedFileText = file.exposedText()
+        val decodedCipherText = Base64.decode(file.encryptedPayloadBase64).decodeToString()
+        val exposedSurface = "$exposedFileText\n$decodedCipherText"
+
+        listOf(
+            SafePassphraseValue,
+            DiaryContentSentinel,
+            SummaryTextSentinel,
+            OAuthTokenSentinel,
+            RawKeySentinel
+        ).forEach { sensitiveValue ->
+            assertFalse(
+                exposedSurface.contains(sensitiveValue),
+                "Encrypted backup file must not expose sensitive value: $sensitiveValue"
+            )
+        }
     }
 
     @Test
@@ -92,6 +121,22 @@ class RealBackupEncryptorTest {
             block()
         }
     }
+
+    private fun com.jeong.sumdiary.domain.backup.EncryptedBackupFile.exposedText(): String =
+        listOf(
+            format,
+            version.toString(),
+            fileName,
+            provider.name,
+            createdAtEpochMillis.toString(),
+            encryption.algorithm,
+            encryption.keyDerivation,
+            encryption.saltBase64,
+            encryption.nonceBase64,
+            encryption.iterations.toString(),
+            encryptedPayloadBase64
+        ).joinToString(separator = "\n")
+
 }
 
 private class TestBackupCipher : BackupCipher {
@@ -115,7 +160,7 @@ private class TestBackupCipher : BackupCipher {
         salt: ByteArray,
         nonce: ByteArray
     ): ByteArray? {
-        if (passphrase.value != "safe backup passphrase") return null
+        if (passphrase.value != SafePassphraseValue) return null
         return xor(encryptedBytes, passphrase)
     }
 
