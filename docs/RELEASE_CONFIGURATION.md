@@ -14,6 +14,18 @@ sumdiary.android.signing.keyAlias=<key-alias>
 sumdiary.android.signing.keyPassword=<key-password>
 ```
 
+Recommended local setup:
+
+- Put the properties in `~/.gradle/gradle.properties` for local release checks.
+- Keep the keystore outside the repository, or in a local ignored path only.
+- Inject the same values through GitHub Actions secrets for CI release checks.
+- Do not commit keystores, signing passwords, OAuth client secrets, `.env` files,
+  `google-services.json`, or `GoogleService-Info.plist`.
+
+The strict readiness audit requires all four signing properties and verifies
+that `sumdiary.android.signing.storeFile` points to an existing file. This keeps
+placeholder paths from being mistaken for release-ready signing evidence.
+
 ## iOS
 
 Create `app/iosApp/Config/SumDiary.local.xcconfig` locally. Do not commit this

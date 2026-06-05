@@ -88,6 +88,18 @@ tasks.register("checkReleaseReadiness") {
             }
         }
 
+        fun requireGradleFileProperty(name: String, missingMessage: String, missingFileMessage: String) {
+            val value = providers.gradleProperty(name).orElse("").get().trim()
+            if (value.isBlank()) {
+                blockers += missingMessage
+                return
+            }
+
+            if (!file(value).isFile) {
+                blockers += missingFileMessage
+            }
+        }
+
         requireNoToken(
             path = "app/android/src/main/java/com/jeong/sumdiary/android/di/AppContainer.kt",
             token = "InMemoryBackupCloudRepository",
@@ -107,9 +119,10 @@ tasks.register("checkReleaseReadiness") {
             name = "sumdiary.googleDriveOAuthClientId",
             message = "Google Drive OAuth client id Gradle property is missing."
         )
-        requireGradleProperty(
+        requireGradleFileProperty(
             name = "sumdiary.android.signing.storeFile",
-            message = "Android release signing storeFile Gradle property is missing."
+            missingMessage = "Android release signing storeFile Gradle property is missing.",
+            missingFileMessage = "Android release signing storeFile does not point to an existing file."
         )
         requireGradleProperty(
             name = "sumdiary.android.signing.storePassword",

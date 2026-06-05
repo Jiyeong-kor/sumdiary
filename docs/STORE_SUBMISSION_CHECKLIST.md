@@ -11,7 +11,9 @@
 - [x] Android debug build warning-free 통과
 - [x] Android release build warning-free 통과
 - [x] Android release bundle build warning-free 통과
-- [ ] Android release signing Gradle property 4종 설정
+- [x] Android release signing Gradle property 4종 strict gate 구성
+- [x] Android release signing storeFile 존재 여부 strict gate 구성
+- [ ] Android release signing Gradle property 4종 실제 값 설정
 - [x] iOS simulator arm64 KMP framework compile warning-free 통과
 - [x] 백업 암호화 테스트 통과
 - [x] 로컬 요약 엔진 테스트 통과
@@ -75,7 +77,8 @@
 
 - Google Drive OAuth client id Gradle property 미설정
 - iOS Google Drive OAuth client id/reversed URL scheme/Apple Developer Team ID local xcconfig 미설정
-- Android release signing property 미설정
+- Android release signing property 실제 값 미설정
+- Android release signing storeFile 실파일 검증 미완료
 - Android ML Kit GenAI 요약 provider 실기기 검증 미완료
 - iOS Foundation Models provider Xcode 26 archive 및 실기기 검증 미완료
 - 로그와 crash report 민감정보 누출 실기기 검증 미완료
