@@ -55,9 +55,11 @@ import com.jeong.sumdiary.feature.backup.BackupState
 import com.jeong.sumdiary.feature.backup.BackupUiStatus
 import com.jeong.sumdiary.feature.entry.EntryIntent
 import com.jeong.sumdiary.feature.entry.EntryState
+import com.jeong.sumdiary.feature.summary.SummaryDisplayMessage
 import com.jeong.sumdiary.feature.summary.SummaryIntent
 import com.jeong.sumdiary.feature.summary.SummaryState
 import com.jeong.sumdiary.feature.summary.SummaryUiStatus
+import com.jeong.sumdiary.feature.summary.displayMessage
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
@@ -889,15 +891,14 @@ private fun SummaryPanel(state: SummaryState) {
                     style = MaterialTheme.typography.labelLarge
                 )
                 Text(
-                    text = state.status.label,
+                    text = state.status.displayMessage.label,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.labelSmall
                 )
             }
             when (state.status) {
                 SummaryUiStatus.NOT_GENERATED -> SummaryStatusText(
-                    title = "아직 생성한 요약이 없어요",
-                    description = "오늘 또는 이번 주 기록을 선택해 요약을 만들 수 있어요."
+                    message = state.status.displayMessage
                 )
                 SummaryUiStatus.LOADING -> {
                     LinearProgressIndicator(
@@ -906,8 +907,7 @@ private fun SummaryPanel(state: SummaryState) {
                         trackColor = MaterialTheme.colorScheme.surfaceVariant
                     )
                     SummaryStatusText(
-                        title = "요약을 만들고 있어요",
-                        description = "일기 원문은 기본적으로 이 기기 안에서 처리해요."
+                        message = state.status.displayMessage
                     )
                 }
                 SummaryUiStatus.CONTENT -> {
@@ -925,44 +925,30 @@ private fun SummaryPanel(state: SummaryState) {
                     }
                 }
                 SummaryUiStatus.NO_ENTRIES -> SummaryStatusText(
-                    title = "이 기간에는 기록이 없어요",
-                    description = "기록이 생기면 요약을 만들 수 있어요."
+                    message = state.status.displayMessage
                 )
                 SummaryUiStatus.UNSUPPORTED -> SummaryStatusText(
-                    title = "이 기기에서는 아직 요약을 만들 수 없어요",
-                    description = "지원 기기와 OS 조건에 따라 온디바이스 AI 사용 가능 여부가 달라질 수 있어요."
+                    message = state.status.displayMessage
                 )
                 SummaryUiStatus.FAILED -> SummaryStatusText(
-                    title = "요약을 만들지 못했어요",
-                    description = "잠시 후 다시 시도해 주세요."
+                    message = state.status.displayMessage
                 )
             }
         }
     }
 }
 
-private val SummaryUiStatus.label: String
-    get() = when (this) {
-        SummaryUiStatus.NOT_GENERATED -> "대기"
-        SummaryUiStatus.LOADING -> "생성 중"
-        SummaryUiStatus.CONTENT -> "완료"
-        SummaryUiStatus.NO_ENTRIES -> "기록 없음"
-        SummaryUiStatus.UNSUPPORTED -> "미지원"
-        SummaryUiStatus.FAILED -> "실패"
-    }
-
 @Composable
 private fun SummaryStatusText(
-    title: String,
-    description: String
+    message: SummaryDisplayMessage
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.Xs)) {
         Text(
-            text = title,
+            text = message.title,
             style = MaterialTheme.typography.titleMedium
         )
         Text(
-            text = description,
+            text = message.description,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodyMedium
         )

@@ -15,6 +15,7 @@ import com.jeong.sumdiary.feature.summary.SummaryIntent
 import com.jeong.sumdiary.feature.summary.SummaryState
 import com.jeong.sumdiary.feature.summary.SummaryUiStatus
 import com.jeong.sumdiary.feature.summary.SummaryViewModel
+import com.jeong.sumdiary.feature.summary.displayMessage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.filter
@@ -95,10 +96,6 @@ class IosSampleController(factory: IosAppFactory) {
     private fun SummaryState.toDisplayText(): String =
         when (status) {
             SummaryUiStatus.CONTENT -> text
-            SummaryUiStatus.NO_ENTRIES -> "오늘 작성한 일기가 아직 없어요."
-            SummaryUiStatus.UNSUPPORTED -> "이 기기에서는 온디바이스 요약을 사용할 수 없어요."
-            SummaryUiStatus.FAILED -> "요약을 만드는 중 문제가 발생했어요."
-            SummaryUiStatus.NOT_GENERATED -> "오늘의 일기를 작성하고 요약을 불러오세요."
-            SummaryUiStatus.LOADING -> "요약을 만드는 중이에요."
+            else -> status.displayMessage.bodyText(text)
         }
 }
