@@ -22,6 +22,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LinearProgressIndicator
@@ -548,6 +549,13 @@ private fun PageIndicators(currentPage: Int, pageCount: Int) {
 
 @Composable
 private fun RequiredNoticeScreen(onComplete: () -> Unit) {
+    var sensitiveDataNoticeChecked by remember { mutableStateOf(false) }
+    var onDeviceAiNoticeChecked by remember { mutableStateOf(false) }
+    var backupOptInNoticeChecked by remember { mutableStateOf(false) }
+    val allNoticesChecked = sensitiveDataNoticeChecked &&
+        onDeviceAiNoticeChecked &&
+        backupOptInNoticeChecked
+
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
@@ -573,49 +581,70 @@ private fun RequiredNoticeScreen(onComplete: () -> Unit) {
                 Column(verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.Md)) {
                     NoticeItem(
                         title = "민감정보가 포함될 수 있어요",
-                        description = "일기에는 건강, 감정, 관계 같은 민감한 내용이 들어갈 수 있어요."
+                        description = "일기에는 건강, 감정, 관계 같은 민감한 내용이 들어갈 수 있어요.",
+                        checked = sensitiveDataNoticeChecked,
+                        onCheckedChange = { sensitiveDataNoticeChecked = it }
                     )
                     NoticeItem(
                         title = "기록과 요약은 기본적으로 기기 안에서 처리해요",
-                        description = "지원 기기와 OS 조건에 따라 온디바이스 AI 사용 가능 여부가 달라질 수 있어요."
+                        description = "지원 기기와 OS 조건에 따라 온디바이스 AI 사용 가능 여부가 달라질 수 있어요.",
+                        checked = onDeviceAiNoticeChecked,
+                        onCheckedChange = { onDeviceAiNoticeChecked = it }
                     )
                     NoticeItem(
                         title = "백업은 사용자가 켠 뒤에만 동작해요",
-                        description = "Google Drive 연결과 암호화 백업은 설정에서 직접 선택해야 해요."
+                        description = "Google Drive 연결과 암호화 백업은 설정에서 직접 선택해야 해요.",
+                        checked = backupOptInNoticeChecked,
+                        onCheckedChange = { backupOptInNoticeChecked = it }
                     )
                 }
             }
             Button(
                 modifier = Modifier.fillMaxWidth(),
+                enabled = allNoticesChecked,
                 onClick = onComplete
             ) {
-                Text(text = "확인하고 계속")
+                Text(text = if (allNoticesChecked) "확인하고 계속" else "필수 고지를 확인해 주세요")
             }
         }
     }
 }
 
 @Composable
-private fun NoticeItem(title: String, description: String) {
+private fun NoticeItem(
+    title: String,
+    description: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit
+) {
     Surface(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onCheckedChange(!checked) },
         shape = MaterialTheme.shapes.medium,
         color = MaterialTheme.colorScheme.surface,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
     ) {
-        Column(
+        Row(
             modifier = Modifier.padding(SumDiarySpacing.Lg),
-            verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.Xs)
+            horizontalArrangement = Arrangement.spacedBy(SumDiarySpacing.Sm),
+            verticalAlignment = Alignment.Top
         ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleMedium
+            Checkbox(
+                checked = checked,
+                onCheckedChange = onCheckedChange
             )
-            Text(
-                text = description,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium
-            )
+            Column(verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.Xs)) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Text(
+                    text = description,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
         }
     }
 }
