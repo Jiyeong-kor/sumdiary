@@ -195,6 +195,10 @@ tasks.register("checkReleaseReadiness") {
             message = "App Store privacy draft is missing."
         )
         requireFile(
+            path = "docs/CONTENT_RATING_DRAFT.md",
+            message = "Store content rating draft is missing."
+        )
+        requireFile(
             path = "app/iosApp/SumDiary.xcodeproj/project.pbxproj",
             message = "iOS Xcode app project is missing."
         )
