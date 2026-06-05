@@ -51,7 +51,7 @@
 - [x] 백업 파일에 OAuth token, 백업 비밀번호, 암호화 키 원문이 포함되지 않는지 회귀 테스트 추가
 - [x] Android release 빌드에서 debug logger 비활성화
 - [ ] 로그와 crash report에 일기 원문, 요약문, OAuth token, 암호화 키가 남지 않는지 실기기 검증
-- [ ] Google Drive OAuth scope 최소 권한 검토
+- [x] Google Drive OAuth scope 최소 권한 검토
 - [ ] OAuth consent screen 캡처 보관
 - [ ] Google OAuth 검증 필요 여부 확인
 - [ ] 백업 삭제와 Google 권한 해제 안내 확인

@@ -36,6 +36,17 @@ class GoogleDriveBackupCloudRepositoryTest {
     }
 
     @Test
+    fun connectRequestsOnlyGoogleDriveAppDataScope() = runTest {
+        val tokenProvider = CapturingGoogleDriveAccessTokenProvider(requiredScopeToken)
+        val repository = repository(tokenProvider = tokenProvider)
+
+        repository.connect()
+
+        assertEquals(setOf(BackupCloudScope.GoogleDriveAppData), tokenProvider.requestedScopes)
+        assertEquals(listOf(BackupCloudScope.GoogleDriveAppData), BackupCloudScope.entries.toList())
+    }
+
+    @Test
     fun uploadReplacesExistingAppDataBackupFile() = runTest {
         val requestedUrls = mutableListOf<String>()
         val repository = repository(
@@ -136,6 +147,22 @@ class GoogleDriveBackupCloudRepositoryTest {
         override suspend fun requestAccessToken(
             requiredScopes: Set<BackupCloudScope>
         ): GoogleDriveAccessToken? = token
+    }
+
+    private class CapturingGoogleDriveAccessTokenProvider(
+        private val token: GoogleDriveAccessToken?
+    ) : GoogleDriveAccessTokenProvider {
+        var requestedScopes: Set<BackupCloudScope> = emptySet()
+            private set
+
+        override suspend fun currentAccessToken(): GoogleDriveAccessToken? = token
+
+        override suspend fun requestAccessToken(
+            requiredScopes: Set<BackupCloudScope>
+        ): GoogleDriveAccessToken? {
+            requestedScopes = requiredScopes
+            return token
+        }
     }
 
     private companion object {
