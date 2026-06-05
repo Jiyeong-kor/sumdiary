@@ -29,13 +29,13 @@ class SummaryViewModel(
     }
 
     private fun loadDaily(date: LocalDate) {
+        _state.value = SummaryState(
+            period = date to date,
+            text = "",
+            emotions = emptyList(),
+            status = SummaryUiStatus.LOADING
+        )
         scope.launch {
-            _state.value = SummaryState(
-                period = date to date,
-                text = "",
-                emotions = emptyList(),
-                status = SummaryUiStatus.LOADING
-            )
             runCatching { generateDailySummary(date) }
                 .onSuccess { result -> _state.value = result.toState() }
                 .onFailure { _state.value = _state.value.toFailedState() }
@@ -43,12 +43,12 @@ class SummaryViewModel(
     }
 
     private fun loadWeekly(anchor: LocalDate) {
+        _state.value = _state.value.copy(
+            text = "",
+            emotions = emptyList(),
+            status = SummaryUiStatus.LOADING
+        )
         scope.launch {
-            _state.value = _state.value.copy(
-                text = "",
-                emotions = emptyList(),
-                status = SummaryUiStatus.LOADING
-            )
             runCatching { generateWeeklySummary(anchor) }
                 .onSuccess { result -> _state.value = result.toState() }
                 .onFailure { _state.value = _state.value.toFailedState() }
