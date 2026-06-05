@@ -28,7 +28,11 @@ kotlin {
                 implementation(project(":shared:domain-diary"))
             }
         }
-        val commonTest by getting
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+            }
+        }
     }
 }
 
