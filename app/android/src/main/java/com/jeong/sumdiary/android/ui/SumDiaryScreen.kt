@@ -1045,6 +1045,11 @@ private fun BackupSettingsPanel(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodySmall
             )
+            Text(
+                text = state.accountRemovalNotice,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodySmall
+            )
             state.lastResult?.let {
                 Text(
                     text = it,
