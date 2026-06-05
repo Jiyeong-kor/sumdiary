@@ -54,7 +54,8 @@ shared metadata compile은 전체 shared 모듈을 대상으로 실행한다.
 ```text
 ./gradlew writeIosReleaseLocalConfig \
   -Psumdiary.ios.googleDriveOAuthClientId=<ios-client-id> \
-  -Psumdiary.ios.googleDriveOAuthReversedClientId=<ios-reversed-client-id>
+  -Psumdiary.ios.googleDriveOAuthReversedClientId=<ios-reversed-client-id> \
+  -Psumdiary.ios.developmentTeam=<apple-developer-team-id>
 
 ./gradlew checkReleaseReadiness \
   -Psumdiary.releaseReadiness.strict=true \
@@ -64,8 +65,14 @@ shared metadata compile은 전체 shared 모듈을 대상으로 실행한다.
   -Psumdiary.android.signing.keyAlias=<key-alias> \
   -Psumdiary.android.signing.keyPassword=<key-password> \
   -Psumdiary.ios.googleDriveOAuthClientId=<ios-client-id> \
-  -Psumdiary.ios.googleDriveOAuthReversedClientId=<ios-reversed-client-id>
+  -Psumdiary.ios.googleDriveOAuthReversedClientId=<ios-reversed-client-id> \
+  -Psumdiary.ios.developmentTeam=<apple-developer-team-id>
 ```
+
+`sumdiary.android.signing.storeFile`은 실제 존재하는 keystore 파일을 가리켜야 한다.
+keystore, 서명 비밀번호, OAuth secret, `.env`, `google-services.json`,
+`GoogleService-Info.plist`는 Git에 커밋하지 않고 로컬 설정 또는 CI secret으로만
+주입한다.
 
 ## 3.1 캐시 최적화 전략
 
