@@ -33,6 +33,8 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
+                implementation(libs.coroutines.guava)
+                implementation(libs.mlkit.genai.summarization)
                 implementation(libs.sqldelight.driver.android)
             }
         }

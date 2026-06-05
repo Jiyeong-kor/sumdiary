@@ -92,9 +92,14 @@ tasks.register("checkReleaseReadiness") {
             message = "Default summarizer provider still returns the unsupported placeholder engine."
         )
         requireNoToken(
-            path = "shared/data-summary/src/commonMain/kotlin/com/jeong/sumdiary/data/summary/PlatformSummarizerProvider.kt",
-            token = "LocalSummarizerEngine",
-            message = "Default summarizer provider still uses the local fallback instead of platform on-device AI SDKs."
+            path = "app/android/src/main/java/com/jeong/sumdiary/android/di/AppContainer.kt",
+            token = "PlatformSummarizerProvider.create()",
+            message = "Android release path still uses the shared local summarizer fallback instead of ML Kit GenAI."
+        )
+        requireNoToken(
+            path = "app/ios/src/commonMain/kotlin/com/jeong/sumdiary/ios/IosAppFactory.kt",
+            token = "PlatformSummarizerProvider.create()",
+            message = "iOS release path still uses the shared local summarizer fallback instead of Apple Foundation Models."
         )
         requireFile(
             path = "docs/PRIVACY_POLICY.md",
