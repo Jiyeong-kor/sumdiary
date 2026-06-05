@@ -50,7 +50,7 @@
 - [ ] iOS Face ID/Touch ID/기기 암호 앱 잠금 실기기 검증
 - [x] 백업 파일에 OAuth token, 백업 비밀번호, 암호화 키 원문이 포함되지 않는지 회귀 테스트 추가
 - [x] Android release 빌드에서 debug logger 비활성화
-- [ ] 로그와 crash report에 일기 원문, 요약문, OAuth token, 암호화 키가 남지 않는지 실기기 검증
+- [x] 로그와 crash report에 일기 원문, 요약문, OAuth token, 암호화 키가 남지 않는지 자동 가드 추가
 - [x] Google Drive OAuth scope 최소 권한 검토
 - [ ] OAuth consent screen 캡처 보관
 - [ ] Google OAuth 검증 필요 여부 확인
@@ -78,5 +78,6 @@
 - Android release signing property 미설정
 - Android ML Kit GenAI 요약 provider 실기기 검증 미완료
 - iOS Foundation Models provider Xcode 26 archive 및 실기기 검증 미완료
+- 로그와 crash report 민감정보 누출 실기기 검증 미완료
 - iOS 앱 archive build 검증 미완료
 - 개인정보처리방침과 이용약관 법무 검토 미완료
