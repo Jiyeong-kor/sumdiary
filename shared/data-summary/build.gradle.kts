@@ -57,6 +57,11 @@ kotlin {
                 implementation(libs.coroutines.test)
             }
         }
+        val androidUnitTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+            }
+        }
     }
 }
 
