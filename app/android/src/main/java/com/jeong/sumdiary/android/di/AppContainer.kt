@@ -102,11 +102,19 @@ class AppContainer @Inject constructor(
         preferences.edit().putBoolean(KEY_FIRST_RUN_GUIDE_COMPLETED, false).apply()
     }
 
+    fun isAppLockEnabled(): Boolean =
+        preferences.getBoolean(KEY_APP_LOCK_ENABLED, false)
+
+    fun setAppLockEnabled(enabled: Boolean) {
+        preferences.edit().putBoolean(KEY_APP_LOCK_ENABLED, enabled).apply()
+    }
+
     fun setGoogleDriveAccessTokenProvider(provider: GoogleDriveAccessTokenProvider) {
         googleDriveAccessTokenProvider.setDelegate(provider)
     }
 
     private companion object {
         const val KEY_FIRST_RUN_GUIDE_COMPLETED = "first_run_guide_completed"
+        const val KEY_APP_LOCK_ENABLED = "app_lock_enabled"
     }
 }
