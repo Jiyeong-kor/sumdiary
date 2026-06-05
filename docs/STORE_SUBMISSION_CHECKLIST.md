@@ -57,7 +57,8 @@
 - [x] 로그와 crash report에 일기 원문, 요약문, OAuth token, 암호화 키가 남지 않는지 자동 가드 추가
 - [x] Google Drive OAuth scope 최소 권한 검토
 - [ ] OAuth consent screen 캡처 보관
-- [ ] Google OAuth 검증 필요 여부 확인
+- [x] Google OAuth 검증 필요 여부 확인: 현재 `drive.appdata` non-sensitive scope 기준 민감/제한 scope 검증 불필요 예상
+- [ ] Google Cloud Console 최종 scope 분류와 OAuth consent screen production 상태 확인
 - [x] 백업 삭제와 Google 권한 해제 안내 확인
 
 ## 5. 기능 검증
@@ -78,6 +79,7 @@
 현재 코드 기준으로 다음 항목은 출시 제출 전 반드시 제거하거나 실제 구현으로 교체해야 한다.
 
 - Google Drive OAuth client id Gradle property 미설정
+- Google Cloud Console OAuth consent screen 최종 상태와 scope 분류 확인 미완료
 - iOS Google Drive OAuth client id/reversed URL scheme/Apple Developer Team ID local xcconfig 미설정
 - Android release signing property 실제 값 미설정
 - Android release signing storeFile 실파일 검증 미완료
