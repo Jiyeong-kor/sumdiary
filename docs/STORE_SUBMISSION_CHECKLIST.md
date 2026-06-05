@@ -39,7 +39,7 @@
 - [x] App Privacy 답변 초안 작성
 - [ ] App Privacy 답변 최종 제출값 확인
 - [ ] 개인정보처리방침 URL 등록
-- [ ] Face ID 또는 민감 권한 사용 문구 검토
+- [x] Face ID 사용 문구 추가
 
 ## 4. 개인정보와 보안
 
@@ -47,6 +47,7 @@
 - [ ] Android ML Kit GenAI 요약 지원 기기와 미지원 기기 UX 검증
 - [x] iOS Foundation Models 요약 provider 연결
 - [ ] iOS Foundation Models 지원 기기와 미지원 기기 UX 검증
+- [ ] iOS Face ID/Touch ID/기기 암호 앱 잠금 실기기 검증
 - [ ] 백업 파일에 OAuth token, 백업 비밀번호, 암호화 키 원문이 포함되지 않는지 검증
 - [ ] 로그와 crash report에 일기 원문, 요약문, OAuth token, 암호화 키가 남지 않는지 검증
 - [ ] Google Drive OAuth scope 최소 권한 검토
