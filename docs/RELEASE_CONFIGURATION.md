@@ -28,6 +28,18 @@ placeholder paths from being mistaken for release-ready signing evidence.
 
 ## iOS
 
+The release metadata is fixed in the Xcode project and verified by the
+readiness audit:
+
+```text
+PRODUCT_BUNDLE_IDENTIFIER = com.jeong.sumdiary
+MARKETING_VERSION = 1.0
+CURRENT_PROJECT_VERSION = 1
+```
+
+`Info.plist` must keep using the matching Xcode build settings for
+`CFBundleIdentifier`, `CFBundleShortVersionString`, and `CFBundleVersion`.
+
 Create `app/iosApp/Config/SumDiary.local.xcconfig` locally. Do not commit this
 file. You can write it by hand:
 
