@@ -13,6 +13,7 @@
 		0A0001010000000000000004 /* SumDiary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A0002010000000000000005 /* SumDiary.framework */; };
 		0A0001010000000000000005 /* GoogleDriveAuthorizationProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0002010000000000000007 /* GoogleDriveAuthorizationProvider.swift */; };
 		0A0001010000000000000006 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 0A000D010000000000000001 /* GoogleSignIn */; };
+		0A0001010000000000000007 /* FoundationModelsSummarizerProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0002010000000000000008 /* FoundationModelsSummarizerProvider.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -23,6 +24,7 @@
 		0A0002010000000000000005 /* SumDiary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SumDiary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A0002010000000000000006 /* SumDiary.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SumDiary.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A0002010000000000000007 /* GoogleDriveAuthorizationProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleDriveAuthorizationProvider.swift; sourceTree = "<group>"; };
+		0A0002010000000000000008 /* FoundationModelsSummarizerProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoundationModelsSummarizerProvider.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,6 +55,7 @@
 				0A0002010000000000000001 /* SumDiaryApp.swift */,
 				0A0002010000000000000002 /* ContentView.swift */,
 				0A0002010000000000000007 /* GoogleDriveAuthorizationProvider.swift */,
+				0A0002010000000000000008 /* FoundationModelsSummarizerProvider.swift */,
 				0A0002010000000000000003 /* Assets.xcassets */,
 				0A0002010000000000000004 /* Info.plist */,
 			);
@@ -177,6 +180,7 @@
 				0A0001010000000000000001 /* SumDiaryApp.swift in Sources */,
 				0A0001010000000000000002 /* ContentView.swift in Sources */,
 				0A0001010000000000000005 /* GoogleDriveAuthorizationProvider.swift in Sources */,
+				0A0001010000000000000007 /* FoundationModelsSummarizerProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
