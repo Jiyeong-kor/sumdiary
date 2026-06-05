@@ -8,6 +8,6 @@ import dagger.hilt.android.HiltAndroidApp
 class SumDiaryApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        NapierLogger.init(enableDebug = true)
+        NapierLogger.init(enableDebug = BuildConfig.DEBUG)
     }
 }
