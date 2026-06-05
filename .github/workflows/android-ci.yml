@@ -120,8 +120,11 @@ jobs:
         run: >
           xcodebuild
           -project app/iosApp/SumDiary.xcodeproj
-          -target SumDiary
+          -scheme SumDiary
           -configuration Debug
           -sdk iphonesimulator
+          -destination 'generic/platform=iOS Simulator'
+          ARCHS=arm64
+          ONLY_ACTIVE_ARCH=YES
           CODE_SIGNING_ALLOWED=NO
           build
