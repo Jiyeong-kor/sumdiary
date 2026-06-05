@@ -340,6 +340,8 @@ sumdiary-backup-v1.sdbak
 - 파일을 찾을 수 없음
 - 네트워크 오류
 
+앱 화면은 원격 백업 파일 삭제가 SumDiary 백업 파일 삭제 범위에 한정되며, Google 계정 권한 해제는 Google 계정 설정에서 별도로 진행해야 함을 함께 안내한다.
+
 ### 12.3 외부 클라우드 계정 삭제
 
 SumDiary는 Google/Dropbox/Apple 계정을 삭제할 수 없다.

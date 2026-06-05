@@ -94,6 +94,7 @@ class BackupViewModel(
         status = BackupUiStatus.Running,
         statusTitle = title,
         statusDescription = "민감한 데이터는 화면이나 로그에 표시하지 않아요.",
+        accountRemovalNotice = BackupState.BackupAccountRemovalNotice,
         busy = true
     )
 
@@ -101,6 +102,7 @@ class BackupViewModel(
         status = BackupUiStatus.Failed,
         statusTitle = "작업 실패",
         statusDescription = "잠시 후 다시 시도해 주세요.",
+        accountRemovalNotice = BackupState.BackupAccountRemovalNotice,
         lastResult = message,
         busy = false
     )
@@ -113,6 +115,7 @@ class BackupViewModel(
                 status = BackupUiStatus.Ready,
                 statusTitle = "$providerName 준비됨",
                 statusDescription = "앱 전용 Drive 영역에 암호화된 백업 파일만 저장할 수 있어요.",
+                accountRemovalNotice = BackupState.BackupAccountRemovalNotice,
                 lastResult = "필수 권한 확인 완료",
                 busy = false
             )
@@ -122,6 +125,7 @@ class BackupViewModel(
                 status = BackupUiStatus.NeedsConnection,
                 statusTitle = "$providerName 권한 필요",
                 statusDescription = "SumDiary 백업 파일을 저장하려면 앱 전용 Drive 권한이 필요해요.",
+                accountRemovalNotice = BackupState.BackupAccountRemovalNotice,
                 lastResult = null,
                 busy = false
             )
@@ -137,6 +141,7 @@ class BackupViewModel(
                 status = BackupUiStatus.Success,
                 statusTitle = "백업 완료",
                 statusDescription = "${providerName}에 암호화된 백업 파일을 저장했어요.",
+                accountRemovalNotice = BackupState.BackupAccountRemovalNotice,
                 lastResult = fileName,
                 busy = false
             )
@@ -153,6 +158,7 @@ class BackupViewModel(
                 status = BackupUiStatus.Success,
                 statusTitle = "복구 완료",
                 statusDescription = "백업 데이터를 현재 기기 데이터와 병합했어요.",
+                accountRemovalNotice = BackupState.BackupAccountRemovalNotice,
                 lastResult = "일기 ${restoredEntries}개 · 요약 ${restoredSummaries}개",
                 busy = false
             )
@@ -170,7 +176,8 @@ class BackupViewModel(
                 connected = true,
                 status = BackupUiStatus.Success,
                 statusTitle = "원격 백업 삭제 완료",
-                statusDescription = "${providerName}의 SumDiary 백업 파일을 삭제했어요.",
+                statusDescription = "${providerName}의 SumDiary 백업 파일을 삭제했어요. Google 계정 권한은 별도로 해제할 수 있어요.",
+                accountRemovalNotice = BackupState.BackupAccountRemovalNotice,
                 lastResult = null,
                 busy = false
             )
@@ -185,6 +192,7 @@ class BackupViewModel(
         status = BackupUiStatus.NeedsConnection,
         statusTitle = "$providerName 연결 필요",
         statusDescription = "먼저 사용자가 직접 Google Drive 연결을 시작해야 해요.",
+        accountRemovalNotice = BackupState.BackupAccountRemovalNotice,
         lastResult = null,
         busy = false
     )
@@ -195,6 +203,7 @@ class BackupViewModel(
         status = BackupUiStatus.Failed,
         statusTitle = "작업 실패",
         statusDescription = "원본 로컬 데이터는 그대로 보존돼요.",
+        accountRemovalNotice = BackupState.BackupAccountRemovalNotice,
         lastResult = message,
         busy = false
     )

@@ -26,7 +26,11 @@ kotlin {
                 implementation(project(":shared:domain-backup"))
             }
         }
-        val commonTest by getting
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+            }
+        }
     }
 }
 

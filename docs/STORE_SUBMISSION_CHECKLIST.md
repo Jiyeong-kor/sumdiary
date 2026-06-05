@@ -54,7 +54,7 @@
 - [x] Google Drive OAuth scope 최소 권한 검토
 - [ ] OAuth consent screen 캡처 보관
 - [ ] Google OAuth 검증 필요 여부 확인
-- [ ] 백업 삭제와 Google 권한 해제 안내 확인
+- [x] 백업 삭제와 Google 권한 해제 안내 확인
 
 ## 5. 기능 검증
 
