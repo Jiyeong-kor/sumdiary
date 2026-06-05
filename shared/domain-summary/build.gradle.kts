@@ -27,7 +27,12 @@ kotlin {
                 implementation(libs.coroutines.core)
             }
         }
-        val commonTest by getting
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+                implementation(libs.coroutines.test)
+            }
+        }
     }
 }
 
