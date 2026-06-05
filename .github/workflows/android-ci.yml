@@ -6,6 +6,8 @@ on:
       - master
       - "feature/**"
       - "chore/**"
+      - "fix/**"
+      - "test/**"
     paths-ignore:
       - "docs/**"
       - "**/*.md"
