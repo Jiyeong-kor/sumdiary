@@ -43,7 +43,7 @@
 
 ## 4. 개인정보와 보안
 
-- [ ] 일기 원문이 외부 AI 서버로 전송되지 않는지 검증
+- [x] 일기 원문이 외부 AI 서버로 전송되지 않는지 검증
 - [ ] Android ML Kit GenAI 요약 지원 기기와 미지원 기기 UX 검증
 - [x] iOS Foundation Models 요약 provider 연결
 - [ ] iOS Foundation Models 지원 기기와 미지원 기기 UX 검증
