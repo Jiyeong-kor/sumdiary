@@ -128,6 +128,7 @@ Refs #27
 - Android ML Kit GenAI 요약 provider
 - Android 생체/기기 인증 앱 잠금 gate
 - iOS Apple Foundation Models 요약 provider 주입 경계와 Swift provider
+- iOS Face ID/Touch ID/기기 암호 앱 잠금 gate와 Face ID 사용 문구
 - iOS GoogleSignIn 기반 Google Drive OAuth provider와 URL callback hook
 - 백업 설정 상태 UI와 백업 비밀번호 입력 UX
 - README 구조와 warning-free 프로젝트 규칙
@@ -136,7 +137,7 @@ Refs #27
 
 - Android/iOS 온디바이스 AI 지원 기기와 미지원 기기 UX 실기기 검증
 - iOS Xcode 26 이상 archive 검증
-- Android/iOS 생체 인증 앱 잠금 실기기 검증과 iOS Face ID/Touch ID 연결
+- Android/iOS 생체 인증 앱 잠금 실기기 검증
 - 백업 키 접근 승인
 - 복구 방식 선택과 충돌 처리 UX
 
