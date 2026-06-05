@@ -82,6 +82,12 @@ tasks.register("checkReleaseReadiness") {
             }
         }
 
+        fun requireToken(path: String, token: String, message: String) {
+            if (!read(path).contains(token)) {
+                blockers += message
+            }
+        }
+
         fun requireGradleProperty(name: String, message: String) {
             if (providers.gradleProperty(name).orElse("").get().isBlank()) {
                 blockers += message
@@ -192,9 +198,39 @@ tasks.register("checkReleaseReadiness") {
             path = "app/iosApp/SumDiary.xcodeproj/project.pbxproj",
             message = "iOS Xcode app project is missing."
         )
+        requireToken(
+            path = "app/iosApp/SumDiary.xcodeproj/project.pbxproj",
+            token = "PRODUCT_BUNDLE_IDENTIFIER = com.jeong.sumdiary;",
+            message = "iOS bundle identifier is not fixed to com.jeong.sumdiary."
+        )
+        requireToken(
+            path = "app/iosApp/SumDiary.xcodeproj/project.pbxproj",
+            token = "MARKETING_VERSION = 1.0;",
+            message = "iOS marketing version is not fixed to 1.0."
+        )
+        requireToken(
+            path = "app/iosApp/SumDiary.xcodeproj/project.pbxproj",
+            token = "CURRENT_PROJECT_VERSION = 1;",
+            message = "iOS build number is not fixed to 1."
+        )
         requireFile(
             path = "app/iosApp/SumDiary/GoogleDriveAuthorizationProvider.swift",
             message = "iOS Google Drive OAuth access token provider is missing."
+        )
+        requireToken(
+            path = "app/iosApp/SumDiary/Info.plist",
+            token = "<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>",
+            message = "iOS Info.plist does not read CFBundleIdentifier from PRODUCT_BUNDLE_IDENTIFIER."
+        )
+        requireToken(
+            path = "app/iosApp/SumDiary/Info.plist",
+            token = "<string>$(MARKETING_VERSION)</string>",
+            message = "iOS Info.plist does not read CFBundleShortVersionString from MARKETING_VERSION."
+        )
+        requireToken(
+            path = "app/iosApp/SumDiary/Info.plist",
+            token = "<string>$(CURRENT_PROJECT_VERSION)</string>",
+            message = "iOS Info.plist does not read CFBundleVersion from CURRENT_PROJECT_VERSION."
         )
         requireFile(
             path = "app/iosApp/Config/SumDiary.xcconfig",

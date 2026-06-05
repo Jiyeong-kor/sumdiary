@@ -36,7 +36,8 @@
 
 - [x] Xcode 프로젝트 또는 iOS 앱 shell 구조 확정
 - [ ] iOS archive build 통과
-- [ ] bundle identifier, version, build number 확정
+- [x] bundle identifier, version, build number readiness gate 구성
+- [x] bundle identifier, version, build number 확정: `com.jeong.sumdiary`, `1.0`, build `1`
 - [ ] iOS `SumDiary.local.xcconfig` Google Drive OAuth client id, reversed URL scheme, Apple Developer Team ID 설정
 - [x] App Privacy 답변 초안 작성
 - [ ] App Privacy 답변 최종 제출값 확인
