@@ -70,7 +70,11 @@ private enum class SumDiaryTab(val title: String) {
 
 @OptIn(ExperimentalTime::class)
 @Composable
-fun SumDiaryScreen(container: AppContainer) {
+fun SumDiaryScreen(
+    container: AppContainer,
+    appLockAvailable: Boolean,
+    onRequestAppUnlock: (onResult: (success: Boolean, message: String?) -> Unit) -> Unit
+) {
     val entryViewModel = remember { container.entryViewModel() }
     val summaryViewModel = remember { container.summaryViewModel() }
     val backupViewModel = remember { container.backupViewModel() }
@@ -80,6 +84,9 @@ fun SumDiaryScreen(container: AppContainer) {
     var firstRunGuideCompleted by remember {
         mutableStateOf(container.hasCompletedFirstRunGuide())
     }
+    var appLockEnabled by remember { mutableStateOf(container.isAppLockEnabled()) }
+    var appUnlocked by remember { mutableStateOf(!appLockEnabled) }
+    var appLockMessage by remember { mutableStateOf<String?>(null) }
     var selectedTab by remember { mutableStateOf(SumDiaryTab.Diary) }
     var showEntryEditor by remember { mutableStateOf(false) }
     var backupPassphraseAction by remember { mutableStateOf<BackupPassphraseAction?>(null) }
@@ -92,6 +99,29 @@ fun SumDiaryScreen(container: AppContainer) {
             onComplete = {
                 container.completeFirstRunGuide()
                 firstRunGuideCompleted = true
+                appUnlocked = !appLockEnabled
+            }
+        )
+        return
+    }
+
+    if (appLockEnabled && !appUnlocked) {
+        AppLockGateScreen(
+            appLockAvailable = appLockAvailable,
+            message = appLockMessage,
+            onUnlock = {
+                if (!appLockAvailable) {
+                    appLockMessage = "이 기기에는 사용할 수 있는 생체 또는 화면 잠금 인증이 없어요."
+                    return@AppLockGateScreen
+                }
+                onRequestAppUnlock { success, message ->
+                    if (success) {
+                        appUnlocked = true
+                        appLockMessage = null
+                    } else {
+                        appLockMessage = message ?: "인증하지 못했어요. 다시 시도해 주세요."
+                    }
+                }
             }
         )
         return
@@ -162,6 +192,32 @@ fun SumDiaryScreen(container: AppContainer) {
                 onShowGuide = {
                     container.resetFirstRunGuide()
                     firstRunGuideCompleted = false
+                    appUnlocked = !appLockEnabled
+                },
+                appLockEnabled = appLockEnabled,
+                appLockAvailable = appLockAvailable,
+                onToggleAppLock = {
+                    if (appLockEnabled) {
+                        container.setAppLockEnabled(false)
+                        appLockEnabled = false
+                        appUnlocked = true
+                        appLockMessage = "앱 잠금을 껐어요."
+                        return@SettingsTabContent
+                    }
+                    if (!appLockAvailable) {
+                        appLockMessage = "이 기기에는 사용할 수 있는 생체 또는 화면 잠금 인증이 없어요."
+                        return@SettingsTabContent
+                    }
+                    onRequestAppUnlock { success, message ->
+                        if (success) {
+                            container.setAppLockEnabled(true)
+                            appLockEnabled = true
+                            appUnlocked = true
+                            appLockMessage = "앱 잠금을 켰어요."
+                        } else {
+                            appLockMessage = message ?: "인증하지 못했어요. 다시 시도해 주세요."
+                        }
+                    }
                 }
             )
         }
@@ -208,6 +264,13 @@ fun SumDiaryScreen(container: AppContainer) {
             }
         )
     }
+
+    appLockMessage?.let { message ->
+        AppLockMessageDialog(
+            message = message,
+            onDismiss = { appLockMessage = null }
+        )
+    }
 }
 
 private enum class BackupPassphraseAction {
@@ -218,7 +281,95 @@ private enum class BackupPassphraseAction {
         when (this) {
             Backup -> BackupIntent.RunManualBackup(passphrase)
             Restore -> BackupIntent.RestoreMerge(passphrase)
+    }
+}
+
+@Composable
+private fun AppLockGateScreen(
+    appLockAvailable: Boolean,
+    message: String?,
+    onUnlock: () -> Unit
+) {
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(SumDiarySpacing.Lg),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.Start
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.Section)) {
+                Column(verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.Sm)) {
+                    Text(
+                        text = "SumDiary 잠김",
+                        style = MaterialTheme.typography.displaySmall
+                    )
+                    Text(
+                        text = "일기와 백업 설정을 보려면 기기에 등록된 생체 또는 화면 잠금 인증이 필요해요.",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+                message?.let {
+                    Surface(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = MaterialTheme.shapes.small,
+                        color = MaterialTheme.colorScheme.surface,
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
+                    ) {
+                        Text(
+                            modifier = Modifier.padding(SumDiarySpacing.Lg),
+                            text = it,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                }
+                Button(
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = appLockAvailable,
+                    onClick = onUnlock
+                ) {
+                    Text(text = "잠금 해제")
+                }
+                if (!appLockAvailable) {
+                    Text(
+                        text = "기기 설정에서 생체 인증 또는 화면 잠금을 먼저 등록해 주세요.",
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+            }
         }
+    }
+}
+
+@Composable
+private fun AppLockMessageDialog(
+    message: String,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text(text = "확인")
+            }
+        },
+        title = {
+            Text(text = "앱 잠금")
+        },
+        text = {
+            Text(
+                text = message,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
+    )
 }
 
 @Composable
@@ -795,7 +946,10 @@ private fun SettingsTabContent(
     backupState: BackupState,
     onBackupIntent: (BackupIntent) -> Unit,
     onRequestBackupPassphrase: (BackupPassphraseAction) -> Unit,
-    onShowGuide: () -> Unit
+    onShowGuide: () -> Unit,
+    appLockEnabled: Boolean,
+    appLockAvailable: Boolean,
+    onToggleAppLock: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -813,7 +967,14 @@ private fun SettingsTabContent(
             onIntent = onBackupIntent,
             onRequestPassphrase = onRequestBackupPassphrase
         )
-        SettingsRow(title = "생체 인증", description = "OS 기본 인증을 사용해요")
+        SettingsRow(
+            title = "생체/기기 인증 앱 잠금",
+            description = appLockDescription(
+                enabled = appLockEnabled,
+                available = appLockAvailable
+            ),
+            onClick = onToggleAppLock
+        )
         SettingsRow(
             title = "앱 가이드 다시 보기",
             description = "첫 실행 안내를 다시 확인해요",
@@ -821,6 +982,16 @@ private fun SettingsTabContent(
         )
     }
 }
+
+private fun appLockDescription(
+    enabled: Boolean,
+    available: Boolean
+): String =
+    when {
+        enabled -> "켜짐 · 앱을 열 때 OS 인증으로 일기 화면을 보호해요."
+        available -> "꺼짐 · 탭해서 생체 또는 화면 잠금 인증을 켤 수 있어요."
+        else -> "사용 불가 · 기기 설정에 생체 인증 또는 화면 잠금을 먼저 등록해 주세요."
+    }
 
 @Composable
 private fun BackupSettingsPanel(
