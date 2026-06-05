@@ -48,7 +48,7 @@
 - [x] iOS Foundation Models 요약 provider 연결
 - [ ] iOS Foundation Models 지원 기기와 미지원 기기 UX 검증
 - [ ] iOS Face ID/Touch ID/기기 암호 앱 잠금 실기기 검증
-- [ ] 백업 파일에 OAuth token, 백업 비밀번호, 암호화 키 원문이 포함되지 않는지 검증
+- [x] 백업 파일에 OAuth token, 백업 비밀번호, 암호화 키 원문이 포함되지 않는지 회귀 테스트 추가
 - [ ] 로그와 crash report에 일기 원문, 요약문, OAuth token, 암호화 키가 남지 않는지 검증
 - [ ] Google Drive OAuth scope 최소 권한 검토
 - [ ] OAuth consent screen 캡처 보관
