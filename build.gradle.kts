@@ -195,6 +195,10 @@ tasks.register("checkReleaseReadiness") {
             message = "App Store privacy draft is missing."
         )
         requireFile(
+            path = "docs/GOOGLE_OAUTH_VERIFICATION_AUDIT.md",
+            message = "Google OAuth verification audit is missing."
+        )
+        requireFile(
             path = "docs/CONTENT_RATING_DRAFT.md",
             message = "Store content rating draft is missing."
         )

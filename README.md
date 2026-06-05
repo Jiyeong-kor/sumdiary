@@ -171,3 +171,4 @@ Refs #27
 - [Google Play Data Safety Draft](docs/PLAY_DATA_SAFETY_DRAFT.md)
 - [App Store Privacy Draft](docs/APP_STORE_PRIVACY_DRAFT.md)
 - [Store Content Rating Draft](docs/CONTENT_RATING_DRAFT.md)
+- [Google OAuth Verification Audit](docs/GOOGLE_OAUTH_VERIFICATION_AUDIT.md)
