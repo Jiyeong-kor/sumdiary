@@ -56,7 +56,7 @@ class BackupViewModel(
         scope.launch {
             _state.value = _state.value.toRunning("백업 암호화 준비 중")
             val result = runCatching { runBackup(passphrase) }.getOrElse {
-                _state.value = _state.value.toFailure("백업을 완료하지 못했어요.")
+                _state.value = _state.value.toFailure("백업을 완료하지 못했어요. 로컬 일기는 그대로 보존돼요.")
                 return@launch
             }
             _state.value = result.toState(_state.value.providerName)
@@ -72,7 +72,7 @@ class BackupViewModel(
                     mode = BackupRestoreMode.Merge
                 )
             }.getOrElse {
-                _state.value = _state.value.toFailure("복구를 완료하지 못했어요.")
+                _state.value = _state.value.toFailure("복구를 완료하지 못했어요. 현재 기기 데이터는 그대로 보존돼요.")
                 return@launch
             }
             _state.value = result.toState(_state.value.providerName)
@@ -83,7 +83,7 @@ class BackupViewModel(
         scope.launch {
             _state.value = _state.value.toRunning("원격 백업 파일 삭제 중")
             val result = runCatching { deleteRemoteBackup() }.getOrElse {
-                _state.value = _state.value.toFailure("원격 백업 파일을 삭제하지 못했어요.")
+                _state.value = _state.value.toFailure("원격 백업 파일을 삭제하지 못했어요. 로컬 일기는 그대로 보존돼요.")
                 return@launch
             }
             _state.value = result.toState(_state.value.providerName)
@@ -146,8 +146,10 @@ class BackupViewModel(
                 busy = false
             )
             BackupRunResult.NotConnected -> needsConnection(providerName)
-            BackupRunResult.EncryptionFailed -> failed(providerName, "백업 파일을 암호화하지 못했어요.")
-            BackupRunResult.UploadFailed -> failed(providerName, "백업 파일을 업로드하지 못했어요.")
+            BackupRunResult.EncryptionFailed ->
+                failed(providerName, "백업 파일을 암호화하지 못했어요. 로컬 일기는 그대로 보존돼요.")
+            BackupRunResult.UploadFailed ->
+                failed(providerName, "암호화된 백업 파일을 업로드하지 못했어요.")
         }
 
     private fun BackupRestoreResult.toState(providerName: String): BackupState =
@@ -164,9 +166,9 @@ class BackupViewModel(
             )
             BackupRestoreResult.NotConnected -> needsConnection(providerName)
             BackupRestoreResult.FileNotFound -> failed(providerName, "백업 파일을 찾지 못했어요.")
-            BackupRestoreResult.InvalidPassphrase -> failed(providerName, "백업 비밀번호가 맞지 않아요.")
+            BackupRestoreResult.InvalidPassphrase -> failed(providerName, "백업 비밀번호가 맞지 않아 복구하지 않았어요.")
             BackupRestoreResult.UnsupportedVersion -> failed(providerName, "지원하지 않는 백업 파일이에요.")
-            BackupRestoreResult.CorruptedFile -> failed(providerName, "백업 파일을 읽지 못했어요.")
+            BackupRestoreResult.CorruptedFile -> failed(providerName, "백업 파일을 읽지 못해 복구하지 않았어요.")
         }
 
     private fun BackupDeleteResult.toState(providerName: String): BackupState =
@@ -183,7 +185,8 @@ class BackupViewModel(
             )
             BackupDeleteResult.NotConnected -> needsConnection(providerName)
             BackupDeleteResult.FileNotFound -> failed(providerName, "삭제할 백업 파일이 없어요.")
-            BackupDeleteResult.DeleteFailed -> failed(providerName, "원격 백업 파일을 삭제하지 못했어요.")
+            BackupDeleteResult.DeleteFailed ->
+                failed(providerName, "원격 백업 파일을 삭제하지 못했어요. 로컬 일기는 그대로 보존돼요.")
         }
 
     private fun needsConnection(providerName: String): BackupState = BackupState(

@@ -4,6 +4,8 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -74,11 +76,17 @@ private enum class SumDiaryTab(val title: String) {
     Settings("설정")
 }
 
+enum class AppLockAuthAvailability {
+    Unavailable,
+    DeviceCredential,
+    Biometric
+}
+
 @OptIn(ExperimentalTime::class)
 @Composable
 fun SumDiaryScreen(
     container: AppContainer,
-    appLockAvailable: Boolean,
+    appLockAvailability: AppLockAuthAvailability,
     onRequestAppUnlock: (onResult: (success: Boolean, message: String?) -> Unit) -> Unit
 ) {
     val entryViewModel = remember { container.entryViewModel() }
@@ -113,11 +121,11 @@ fun SumDiaryScreen(
 
     if (appLockEnabled && !appUnlocked) {
         AppLockGateScreen(
-            appLockAvailable = appLockAvailable,
+            appLockAvailability = appLockAvailability,
             message = appLockMessage,
             onUnlock = {
-                if (!appLockAvailable) {
-                    appLockMessage = "이 기기에는 사용할 수 있는 생체 또는 화면 잠금 인증이 없어요."
+                if (appLockAvailability == AppLockAuthAvailability.Unavailable) {
+                    appLockMessage = "이 기기에는 아직 사용할 수 있는 화면 잠금이 없어요."
                     return@AppLockGateScreen
                 }
                 onRequestAppUnlock { success, message ->
@@ -201,7 +209,7 @@ fun SumDiaryScreen(
                     appUnlocked = !appLockEnabled
                 },
                 appLockEnabled = appLockEnabled,
-                appLockAvailable = appLockAvailable,
+                appLockAvailability = appLockAvailability,
                 onToggleAppLock = {
                     if (appLockEnabled) {
                         container.setAppLockEnabled(false)
@@ -210,8 +218,8 @@ fun SumDiaryScreen(
                         appLockMessage = "앱 잠금을 껐어요."
                         return@SettingsTabContent
                     }
-                    if (!appLockAvailable) {
-                        appLockMessage = "이 기기에는 사용할 수 있는 생체 또는 화면 잠금 인증이 없어요."
+                    if (appLockAvailability == AppLockAuthAvailability.Unavailable) {
+                        appLockMessage = "이 기기에는 아직 사용할 수 있는 화면 잠금이 없어요."
                         return@SettingsTabContent
                     }
                     onRequestAppUnlock { success, message ->
@@ -292,7 +300,7 @@ private enum class BackupPassphraseAction {
 
 @Composable
 private fun AppLockGateScreen(
-    appLockAvailable: Boolean,
+    appLockAvailability: AppLockAuthAvailability,
     message: String?,
     onUnlock: () -> Unit
 ) {
@@ -319,10 +327,17 @@ private fun AppLockGateScreen(
                         style = MaterialTheme.typography.displaySmall
                     )
                     Text(
-                        text = "일기와 백업 설정을 보려면 기기에 등록된 생체 또는 화면 잠금 인증이 필요해요.",
+                        text = appLockGateDescription(appLockAvailability),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         style = MaterialTheme.typography.bodyLarge
                     )
+                    appLockPrivacyDescription(appLockAvailability)?.let { description ->
+                        Text(
+                            text = description,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
                 }
                 message?.let {
                     Surface(
@@ -341,14 +356,14 @@ private fun AppLockGateScreen(
                 }
                 Button(
                     modifier = Modifier.fillMaxWidth(),
-                    enabled = appLockAvailable,
+                    enabled = appLockAvailability != AppLockAuthAvailability.Unavailable,
                     onClick = onUnlock
                 ) {
                     Text(text = "잠금 해제")
                 }
-                if (!appLockAvailable) {
+                if (appLockAvailability == AppLockAuthAvailability.Unavailable) {
                     Text(
-                        text = "기기 설정에서 생체 인증 또는 화면 잠금을 먼저 등록해 주세요.",
+                        text = "기기 설정에서 화면 잠금을 먼저 등록해 주세요.",
                         color = MaterialTheme.colorScheme.error,
                         style = MaterialTheme.typography.bodyMedium
                     )
@@ -357,6 +372,23 @@ private fun AppLockGateScreen(
         }
     }
 }
+
+private fun appLockGateDescription(availability: AppLockAuthAvailability): String =
+    when (availability) {
+        AppLockAuthAvailability.Biometric ->
+            "기기에 등록된 지문/얼굴 또는 화면 잠금으로 열어요."
+        AppLockAuthAvailability.DeviceCredential ->
+            "이 기기에서는 화면 잠금으로만 열 수 있어요."
+        AppLockAuthAvailability.Unavailable ->
+            "이 기기에는 아직 사용할 수 있는 화면 잠금이 없어요."
+    }
+
+private fun appLockPrivacyDescription(availability: AppLockAuthAvailability): String? =
+    when (availability) {
+        AppLockAuthAvailability.Biometric -> "SumDiary는 생체 정보를 저장하지 않아요."
+        AppLockAuthAvailability.DeviceCredential -> "SumDiary는 화면 잠금 정보를 저장하지 않아요."
+        AppLockAuthAvailability.Unavailable -> null
+    }
 
 @Composable
 private fun AppLockMessageDialog(
@@ -412,28 +444,22 @@ private enum class AppGuidePage(
     val previewBody: String
 ) {
     Entry(
-        title = "짧게 남기는 하루",
-        description = "생각이 길어지기 전에 빠르게 기록해요.",
+        title = "일기는 기기에 저장돼요",
+        description = "오늘 기억할 문장만 짧게 남겨요.",
         previewTitle = "오늘의 기록",
-        previewBody = "오후 9:12 · 회의 후 남은 생각을 정리했다"
+        previewBody = "짧게 남기기 · 나중에 요약 가능"
     ),
     Summary(
-        title = "기기 안에서 만드는 요약",
-        description = "기록을 다시 읽기 쉽게 짧게 정리해요.",
-        previewTitle = "기기 안에서 만든 요약",
-        previewBody = "오늘은 정리와 회복이 함께 있던 날이에요."
+        title = "요약은 기기 안에서 처리해요",
+        description = "지원 기기에서는 일기 원문을 외부 서버로 보내지 않고 정리해요.",
+        previewTitle = "온디바이스 요약",
+        previewBody = "일기 원문을 외부 서버로 보내지 않음"
     ),
     Backup(
-        title = "사용자가 켜는 백업",
-        description = "Google Drive 백업은 사용자가 선택한 뒤에만 동작해요.",
+        title = "백업은 사용자가 켠 뒤에만 동작해요",
+        description = "Google Drive에는 암호화된 백업 파일만 저장돼요.",
         previewTitle = "Google Drive 백업",
-        previewBody = "암호화된 백업 · 아직 연결되지 않음"
-    ),
-    Security(
-        title = "조용한 보호 설정",
-        description = "생체 인증과 햅틱은 설정에서 직접 조정해요.",
-        previewTitle = "생체 인증",
-        previewBody = "OS 기본 인증 사용 · 꺼짐"
+        previewBody = "암호화된 백업만 저장 · 아직 꺼짐"
     )
 }
 
@@ -613,7 +639,7 @@ private fun RequiredNoticeScreen(onComplete: () -> Unit) {
                     )
                     NoticeItem(
                         title = "백업은 사용자가 켠 뒤에만 동작해요",
-                        description = "Google Drive 연결과 암호화 백업은 설정에서 직접 선택해야 해요.",
+                        description = "Google Drive에는 암호화된 백업 파일만 저장돼요. 비밀번호를 잃어버리면 복구할 수 없어요.",
                         checked = backupOptInNoticeChecked,
                         onCheckedChange = { backupOptInNoticeChecked = it }
                     )
@@ -813,7 +839,7 @@ private fun EmptyDiaryCard(onCreateEntry: () -> Unit) {
                 style = MaterialTheme.typography.titleMedium
             )
             Text(
-                text = "짧게 남기고 나중에 요약해 볼 수 있어요.",
+                text = "지금 떠오른 한 문장만 남겨도 돼요. 나중에 기기 안에서 요약할 수 있어요.",
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyMedium
             )
@@ -824,7 +850,7 @@ private fun EmptyDiaryCard(onCreateEntry: () -> Unit) {
                     contentColor = MaterialTheme.colorScheme.onPrimary
                 )
             ) {
-                Text(text = "일기 쓰기")
+                Text(text = "짧게 남기기")
             }
         }
     }
@@ -875,6 +901,7 @@ private fun SummaryTabContent(
         modifier = Modifier
             .fillMaxSize()
             .padding(paddingValues)
+            .verticalScroll(rememberScrollState())
             .padding(SumDiarySpacing.lg),
         verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.md)
     ) {
@@ -921,6 +948,11 @@ private fun SummaryPanel(state: SummaryState) {
                     style = MaterialTheme.typography.labelSmall
                 )
             }
+            Text(
+                text = "지원 기기에서는 일기 원문을 외부 서버로 보내지 않고 요약해요.",
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodySmall
+            )
             when (state.status) {
                 SummaryUiStatus.NOT_GENERATED -> SummaryStatusText(
                     message = state.status.displayMessage
@@ -988,13 +1020,14 @@ private fun SettingsTabContent(
     onRequestBackupPassphrase: (BackupPassphraseAction) -> Unit,
     onShowGuide: () -> Unit,
     appLockEnabled: Boolean,
-    appLockAvailable: Boolean,
+    appLockAvailability: AppLockAuthAvailability,
     onToggleAppLock: () -> Unit
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(paddingValues)
+            .verticalScroll(rememberScrollState())
             .padding(SumDiarySpacing.lg),
         verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.md)
     ) {
@@ -1008,10 +1041,10 @@ private fun SettingsTabContent(
             onRequestPassphrase = onRequestBackupPassphrase
         )
         SettingsRow(
-            title = "생체/기기 인증 앱 잠금",
+            title = "앱 잠금",
             description = appLockDescription(
                 enabled = appLockEnabled,
-                available = appLockAvailable
+                availability = appLockAvailability
             ),
             onClick = onToggleAppLock
         )
@@ -1025,12 +1058,18 @@ private fun SettingsTabContent(
 
 private fun appLockDescription(
     enabled: Boolean,
-    available: Boolean
+    availability: AppLockAuthAvailability
 ): String =
     when {
-        enabled -> "켜짐 · 앱을 열 때 OS 인증으로 일기 화면을 보호해요."
-        available -> "꺼짐 · 탭해서 생체 또는 화면 잠금 인증을 켤 수 있어요."
-        else -> "사용 불가 · 기기 설정에 생체 인증 또는 화면 잠금을 먼저 등록해 주세요."
+        enabled && availability == AppLockAuthAvailability.Biometric ->
+            "켜짐 · 지문/얼굴 또는 화면 잠금으로 일기 화면을 보호해요. 생체 정보는 저장하지 않아요."
+        enabled && availability == AppLockAuthAvailability.DeviceCredential ->
+            "켜짐 · 이 기기에서는 화면 잠금으로 일기 화면을 보호해요."
+        availability == AppLockAuthAvailability.Biometric ->
+            "꺼짐 · 기기에 등록된 지문/얼굴 또는 화면 잠금으로 열 수 있어요."
+        availability == AppLockAuthAvailability.DeviceCredential ->
+            "꺼짐 · 이 기기에서는 화면 잠금으로만 열 수 있어요."
+        else -> "사용 불가 · 기기 설정에서 화면 잠금을 먼저 등록해 주세요."
     }
 
 @Composable
@@ -1089,7 +1128,7 @@ private fun BackupSettingsPanel(
                 style = MaterialTheme.typography.bodyMedium
             )
             Text(
-                text = "백업 파일은 앱에서 암호화한 뒤 저장하고, 백업 비밀번호는 화면에 표시하지 않아요.",
+                text = "Google Drive에는 암호화된 SumDiary 백업 파일만 저장돼요.\n일기 원문은 그대로 업로드되지 않아요.\n백업 비밀번호를 잃어버리면 복구할 수 없어요.",
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodySmall
             )
@@ -1165,8 +1204,10 @@ private fun BackupPassphraseDialog(
         BackupPassphraseAction.Restore -> "복구 비밀번호 입력"
     }
     val description = when (action) {
-        BackupPassphraseAction.Backup -> "이 비밀번호로 백업 파일을 암호화해요. 잃어버리면 새 기기에서 복구할 수 없어요."
-        BackupPassphraseAction.Restore -> "백업을 만들 때 사용한 비밀번호를 입력해야 복구할 수 있어요."
+        BackupPassphraseAction.Backup ->
+            "이 비밀번호로 백업 파일을 암호화해요. Google Drive에는 암호화된 파일만 저장되며, 비밀번호를 잃어버리면 복구할 수 없어요."
+        BackupPassphraseAction.Restore ->
+            "백업을 만들 때 사용한 비밀번호를 입력해야 현재 기기 데이터와 병합할 수 있어요."
     }
 
     AlertDialog(
@@ -1391,7 +1432,7 @@ private fun DeleteEntryDialog(
                         .size(96.dp)
                 )
                 Text(
-                    text = "이 작업은 로컬에 저장된 일기를 삭제해요. 백업이 켜져 있다면 다음 백업에서 삭제 상태가 반영될 수 있어요.",
+                    text = "이 기기의 일기가 삭제돼요. 백업이 켜져 있다면 다음 백업에서 삭제 상태가 반영될 수 있어요.",
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium
                 )
