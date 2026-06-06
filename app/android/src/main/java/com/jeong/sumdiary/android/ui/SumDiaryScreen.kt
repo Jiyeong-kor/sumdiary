@@ -1,6 +1,7 @@
 package com.jeong.sumdiary.android.ui
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -43,9 +44,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.jeong.sumdiary.android.R
 import com.jeong.sumdiary.android.di.AppContainer
 import com.jeong.sumdiary.core.designsystem.SumDiarySpacing
 import com.jeong.sumdiary.domain.backup.BackupPassphrase
@@ -305,6 +308,11 @@ private fun AppLockGateScreen(
             horizontalAlignment = Alignment.Start
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.Section)) {
+                SumDiaryIllustration(
+                    resourceId = R.drawable.sumdiary_biometric_lock,
+                    contentDescription = "생체 인증 잠금 일러스트",
+                    modifier = Modifier.size(112.dp)
+                )
                 Column(verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.Sm)) {
                     Text(
                         text = "SumDiary 잠김",
@@ -497,10 +505,20 @@ private fun AppGuidePreviewCard(page: AppGuidePage) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = page.previewTitle,
-                    style = MaterialTheme.typography.titleMedium
-                )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(SumDiarySpacing.Sm),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    SumDiaryIllustration(
+                        resourceId = R.drawable.sumdiary_brand_mark_blueberry_lens,
+                        contentDescription = null,
+                        modifier = Modifier.size(32.dp)
+                    )
+                    Text(
+                        text = page.previewTitle,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
                 StatusDot(label = "Preview")
             }
             Surface(
@@ -783,6 +801,13 @@ private fun EmptyDiaryCard(onCreateEntry: () -> Unit) {
             modifier = Modifier.padding(SumDiarySpacing.Xl),
             verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.Md)
         ) {
+            SumDiaryIllustration(
+                resourceId = R.drawable.sumdiary_empty_diary,
+                contentDescription = "빈 일기 일러스트",
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .size(112.dp)
+            )
             Text(
                 text = "아직 오늘 기록이 없어요",
                 style = MaterialTheme.typography.titleMedium
@@ -1029,19 +1054,27 @@ private fun BackupSettingsPanel(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.Top
             ) {
-                Column(
+                Row(
                     modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.Xs)
+                    horizontalArrangement = Arrangement.spacedBy(SumDiarySpacing.Sm),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = "${state.providerName} 백업",
-                        style = MaterialTheme.typography.titleMedium
+                    SumDiaryIllustration(
+                        resourceId = R.drawable.sumdiary_backup_cloud,
+                        contentDescription = null,
+                        modifier = Modifier.size(48.dp)
                     )
-                    Text(
-                        text = state.statusTitle,
-                        color = state.status.contentColor(),
-                        style = MaterialTheme.typography.bodyMedium
-                    )
+                    Column(verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.Xs)) {
+                        Text(
+                            text = "${state.providerName} 백업",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        Text(
+                            text = state.statusTitle,
+                            color = state.status.contentColor(),
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
                 }
                 Text(
                     text = state.status.label,
@@ -1349,11 +1382,33 @@ private fun DeleteEntryDialog(
             Text(text = "일기를 삭제할까요?")
         },
         text = {
-            Text(
-                text = "이 작업은 로컬에 저장된 일기를 삭제해요. 백업이 켜져 있다면 다음 백업에서 삭제 상태가 반영될 수 있어요.",
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium
-            )
+            Column(verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.Md)) {
+                SumDiaryIllustration(
+                    resourceId = R.drawable.sumdiary_delete_data,
+                    contentDescription = "삭제 경고 일러스트",
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .size(96.dp)
+                )
+                Text(
+                    text = "이 작업은 로컬에 저장된 일기를 삭제해요. 백업이 켜져 있다면 다음 백업에서 삭제 상태가 반영될 수 있어요.",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
         }
+    )
+}
+
+@Composable
+private fun SumDiaryIllustration(
+    resourceId: Int,
+    contentDescription: String?,
+    modifier: Modifier = Modifier
+) {
+    Image(
+        painter = painterResource(id = resourceId),
+        contentDescription = contentDescription,
+        modifier = modifier
     )
 }
