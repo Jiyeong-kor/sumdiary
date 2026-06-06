@@ -259,6 +259,7 @@ fun SumDiaryScreen(
 
     if (pendingDeleteEntryId != null) {
         DeleteEntryDialog(
+            backupEnabled = backupState.connected,
             onDismiss = { pendingDeleteEntryId = null },
             onConfirm = {
                 pendingDeleteEntryId?.let { entryViewModel.dispatch(EntryIntent.Delete(it)) }
@@ -318,7 +319,7 @@ private fun AppLockGateScreen(
             Column(verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.section)) {
                 SumDiaryIllustration(
                     resourceId = R.drawable.sumdiary_biometric_lock,
-                    contentDescription = "생체 인증 잠금 일러스트",
+                    contentDescription = appLockIllustrationDescription(appLockAvailability),
                     modifier = Modifier.size(112.dp)
                 )
                 Column(verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.sm)) {
@@ -388,6 +389,13 @@ private fun appLockPrivacyDescription(availability: AppLockAuthAvailability): St
         AppLockAuthAvailability.Biometric -> "SumDiary는 생체 정보를 저장하지 않아요."
         AppLockAuthAvailability.DeviceCredential -> "SumDiary는 화면 잠금 정보를 저장하지 않아요."
         AppLockAuthAvailability.Unavailable -> null
+    }
+
+private fun appLockIllustrationDescription(availability: AppLockAuthAvailability): String =
+    when (availability) {
+        AppLockAuthAvailability.Biometric -> "지문 또는 얼굴로 열 수 있는 앱 잠금"
+        AppLockAuthAvailability.DeviceCredential -> "화면 잠금으로 여는 앱 잠금"
+        AppLockAuthAvailability.Unavailable -> "화면 잠금 설정이 필요한 앱 잠금"
     }
 
 @Composable
@@ -1401,6 +1409,7 @@ private fun EntryEditorDialog(
 
 @Composable
 private fun DeleteEntryDialog(
+    backupEnabled: Boolean,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit
 ) {
@@ -1432,7 +1441,7 @@ private fun DeleteEntryDialog(
                         .size(96.dp)
                 )
                 Text(
-                    text = "이 기기의 일기가 삭제돼요. 백업이 켜져 있다면 다음 백업에서 삭제 상태가 반영될 수 있어요.",
+                    text = deleteEntryDescription(backupEnabled),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium
                 )
@@ -1440,6 +1449,13 @@ private fun DeleteEntryDialog(
         }
     )
 }
+
+private fun deleteEntryDescription(backupEnabled: Boolean): String =
+    if (backupEnabled) {
+        "이 기기의 일기가 삭제돼요. 다음 백업에 삭제 상태가 반영될 수 있어요."
+    } else {
+        "이 기기의 일기가 삭제돼요."
+    }
 
 @Composable
 private fun SumDiaryIllustration(
