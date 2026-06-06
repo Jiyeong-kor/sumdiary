@@ -1,6 +1,7 @@
 package com.jeong.sumdiary.android.ui
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -43,9 +44,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.jeong.sumdiary.android.R
 import com.jeong.sumdiary.android.di.AppContainer
 import com.jeong.sumdiary.core.designsystem.SumDiarySpacing
 import com.jeong.sumdiary.domain.backup.BackupPassphrase
@@ -300,12 +303,17 @@ private fun AppLockGateScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(SumDiarySpacing.Lg),
+                .padding(SumDiarySpacing.lg),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.Start
         ) {
-            Column(verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.Section)) {
-                Column(verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.Sm)) {
+            Column(verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.section)) {
+                SumDiaryIllustration(
+                    resourceId = R.drawable.sumdiary_biometric_lock,
+                    contentDescription = "생체 인증 잠금 일러스트",
+                    modifier = Modifier.size(112.dp)
+                )
+                Column(verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.sm)) {
                     Text(
                         text = "SumDiary 잠김",
                         style = MaterialTheme.typography.displaySmall
@@ -324,7 +332,7 @@ private fun AppLockGateScreen(
                         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
                     ) {
                         Text(
-                            modifier = Modifier.padding(SumDiarySpacing.Lg),
+                            modifier = Modifier.padding(SumDiarySpacing.lg),
                             text = it,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             style = MaterialTheme.typography.bodyMedium
@@ -444,7 +452,7 @@ private fun AppGuideScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(SumDiarySpacing.Lg),
+                .padding(SumDiarySpacing.lg),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Row(
@@ -455,8 +463,8 @@ private fun AppGuideScreen(
                     Text(text = "건너뛰기")
                 }
             }
-            Column(verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.Section)) {
-                Column(verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.Sm)) {
+            Column(verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.section)) {
+                Column(verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.sm)) {
                     Text(
                         text = guidePage.title,
                         style = MaterialTheme.typography.displaySmall
@@ -489,18 +497,28 @@ private fun AppGuidePreviewCard(page: AppGuidePage) {
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
     ) {
         Column(
-            modifier = Modifier.padding(SumDiarySpacing.Xl),
-            verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.Md)
+            modifier = Modifier.padding(SumDiarySpacing.xl),
+            verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.md)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = page.previewTitle,
-                    style = MaterialTheme.typography.titleMedium
-                )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(SumDiarySpacing.sm),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    SumDiaryIllustration(
+                        resourceId = R.drawable.sumdiary_brand_mark_blueberry_lens,
+                        contentDescription = null,
+                        modifier = Modifier.size(32.dp)
+                    )
+                    Text(
+                        text = page.previewTitle,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
                 StatusDot(label = "Preview")
             }
             Surface(
@@ -510,8 +528,8 @@ private fun AppGuidePreviewCard(page: AppGuidePage) {
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
             ) {
                 Column(
-                    modifier = Modifier.padding(SumDiarySpacing.Lg),
-                    verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.Sm)
+                    modifier = Modifier.padding(SumDiarySpacing.lg),
+                    verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.sm)
                 ) {
                     Text(
                         text = page.previewBody,
@@ -531,7 +549,7 @@ private fun AppGuidePreviewCard(page: AppGuidePage) {
 
 @Composable
 private fun PageIndicators(currentPage: Int, pageCount: Int) {
-    Row(horizontalArrangement = Arrangement.spacedBy(SumDiarySpacing.Xs)) {
+    Row(horizontalArrangement = Arrangement.spacedBy(SumDiarySpacing.xs)) {
         repeat(pageCount) { index ->
             Box(
                 modifier = Modifier
@@ -565,11 +583,11 @@ private fun RequiredNoticeScreen(onComplete: () -> Unit) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(SumDiarySpacing.Lg),
+                .padding(SumDiarySpacing.lg),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Column(verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.Section)) {
-                Column(verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.Sm)) {
+            Column(verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.section)) {
+                Column(verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.sm)) {
                     Text(
                         text = "시작 전 확인",
                         style = MaterialTheme.typography.displaySmall
@@ -580,7 +598,7 @@ private fun RequiredNoticeScreen(onComplete: () -> Unit) {
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
-                Column(verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.Md)) {
+                Column(verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.md)) {
                     NoticeItem(
                         title = "민감정보가 포함될 수 있어요",
                         description = "일기에는 건강, 감정, 관계 같은 민감한 내용이 들어갈 수 있어요.",
@@ -628,15 +646,15 @@ private fun NoticeItem(
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
     ) {
         Row(
-            modifier = Modifier.padding(SumDiarySpacing.Lg),
-            horizontalArrangement = Arrangement.spacedBy(SumDiarySpacing.Sm),
+            modifier = Modifier.padding(SumDiarySpacing.lg),
+            horizontalArrangement = Arrangement.spacedBy(SumDiarySpacing.sm),
             verticalAlignment = Alignment.Top
         ) {
             Checkbox(
                 checked = checked,
                 onCheckedChange = onCheckedChange
             )
-            Column(verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.Xs)) {
+            Column(verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.xs)) {
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleMedium
@@ -665,15 +683,15 @@ private fun SumDiaryTopTabs(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(
-                        start = SumDiarySpacing.Lg,
-                        top = SumDiarySpacing.Xl,
-                        end = SumDiarySpacing.Lg,
-                        bottom = SumDiarySpacing.Sm
+                        start = SumDiarySpacing.lg,
+                        top = SumDiarySpacing.xl,
+                        end = SumDiarySpacing.lg,
+                        bottom = SumDiarySpacing.sm
                     ),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.Xs)) {
+                Column(verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.xs)) {
                     Text(
                         text = "SumDiary",
                         style = MaterialTheme.typography.titleLarge
@@ -716,7 +734,7 @@ private fun StatusDot(label: String) {
         contentColor = MaterialTheme.colorScheme.onPrimaryContainer
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = SumDiarySpacing.Sm, vertical = SumDiarySpacing.Xs),
+            modifier = Modifier.padding(horizontal = SumDiarySpacing.sm, vertical = SumDiarySpacing.xs),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
@@ -727,7 +745,7 @@ private fun StatusDot(label: String) {
                         shape = MaterialTheme.shapes.extraSmall
                     )
             )
-            Spacer(modifier = Modifier.width(SumDiarySpacing.Xs))
+            Spacer(modifier = Modifier.width(SumDiarySpacing.xs))
             Text(
                 text = label,
                 style = MaterialTheme.typography.labelSmall
@@ -747,8 +765,8 @@ private fun DiaryTabContent(
         modifier = Modifier
             .fillMaxSize()
             .padding(paddingValues),
-        verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.Md),
-        contentPadding = PaddingValues(SumDiarySpacing.Lg)
+        verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.md),
+        contentPadding = PaddingValues(SumDiarySpacing.lg)
     ) {
         item {
             ScreenSectionHeader(
@@ -780,9 +798,16 @@ private fun EmptyDiaryCard(onCreateEntry: () -> Unit) {
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
     ) {
         Column(
-            modifier = Modifier.padding(SumDiarySpacing.Xl),
-            verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.Md)
+            modifier = Modifier.padding(SumDiarySpacing.xl),
+            verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.md)
         ) {
+            SumDiaryIllustration(
+                resourceId = R.drawable.sumdiary_empty_diary,
+                contentDescription = "빈 일기 일러스트",
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .size(112.dp)
+            )
             Text(
                 text = "아직 오늘 기록이 없어요",
                 style = MaterialTheme.typography.titleMedium
@@ -819,8 +844,8 @@ private fun DiaryEntryItem(
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Column(
-            modifier = Modifier.padding(SumDiarySpacing.Lg),
-            verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.Sm)
+            modifier = Modifier.padding(SumDiarySpacing.lg),
+            verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.sm)
         ) {
             Text(
                 text = entry.time.toString(),
@@ -850,15 +875,15 @@ private fun SummaryTabContent(
         modifier = Modifier
             .fillMaxSize()
             .padding(paddingValues)
-            .padding(SumDiarySpacing.Lg),
-        verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.Md)
+            .padding(SumDiarySpacing.lg),
+        verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.md)
     ) {
         ScreenSectionHeader(
             title = "요약",
             description = "${state.period.first} ~ ${state.period.second}"
         )
         SummaryPanel(state)
-        Row(horizontalArrangement = Arrangement.spacedBy(SumDiarySpacing.Sm)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(SumDiarySpacing.sm)) {
             Button(onClick = { onIntent(SummaryIntent.LoadDaily(today)) }) {
                 Text(text = "오늘 요약")
             }
@@ -878,8 +903,8 @@ private fun SummaryPanel(state: SummaryState) {
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
     ) {
         Column(
-            modifier = Modifier.padding(SumDiarySpacing.Lg),
-            verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.Md)
+            modifier = Modifier.padding(SumDiarySpacing.lg),
+            verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.md)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -942,7 +967,7 @@ private fun SummaryPanel(state: SummaryState) {
 private fun SummaryStatusText(
     message: SummaryDisplayMessage
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.Xs)) {
+    Column(verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.xs)) {
         Text(
             text = message.title,
             style = MaterialTheme.typography.titleMedium
@@ -970,8 +995,8 @@ private fun SettingsTabContent(
         modifier = Modifier
             .fillMaxSize()
             .padding(paddingValues)
-            .padding(SumDiarySpacing.Lg),
-        verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.Md)
+            .padding(SumDiarySpacing.lg),
+        verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.md)
     ) {
         ScreenSectionHeader(
             title = "설정",
@@ -1021,27 +1046,35 @@ private fun BackupSettingsPanel(
         border = BorderStroke(1.dp, state.status.borderColor())
     ) {
         Column(
-            modifier = Modifier.padding(SumDiarySpacing.Lg),
-            verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.Sm)
+            modifier = Modifier.padding(SumDiarySpacing.lg),
+            verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.sm)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.Top
             ) {
-                Column(
+                Row(
                     modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.Xs)
+                    horizontalArrangement = Arrangement.spacedBy(SumDiarySpacing.sm),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = "${state.providerName} 백업",
-                        style = MaterialTheme.typography.titleMedium
+                    SumDiaryIllustration(
+                        resourceId = R.drawable.sumdiary_backup_cloud,
+                        contentDescription = null,
+                        modifier = Modifier.size(48.dp)
                     )
-                    Text(
-                        text = state.statusTitle,
-                        color = state.status.contentColor(),
-                        style = MaterialTheme.typography.bodyMedium
-                    )
+                    Column(verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.xs)) {
+                        Text(
+                            text = "${state.providerName} 백업",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        Text(
+                            text = state.statusTitle,
+                            color = state.status.contentColor(),
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
                 }
                 Text(
                     text = state.status.label,
@@ -1079,7 +1112,7 @@ private fun BackupSettingsPanel(
             }
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(SumDiarySpacing.Sm)
+                horizontalArrangement = Arrangement.spacedBy(SumDiarySpacing.sm)
             ) {
                 Button(
                     modifier = Modifier.weight(1f),
@@ -1098,7 +1131,7 @@ private fun BackupSettingsPanel(
             }
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(SumDiarySpacing.Sm)
+                horizontalArrangement = Arrangement.spacedBy(SumDiarySpacing.sm)
             ) {
                 TextButton(
                     modifier = Modifier.weight(1f),
@@ -1140,7 +1173,7 @@ private fun BackupPassphraseDialog(
         onDismissRequest = onDismiss,
         title = { Text(text = title) },
         text = {
-            Column(verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.Sm)) {
+            Column(verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.sm)) {
                 Text(
                     text = description,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -1228,8 +1261,8 @@ private fun SettingsRow(
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
     ) {
         Column(
-            modifier = Modifier.padding(SumDiarySpacing.Lg),
-            verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.Xs)
+            modifier = Modifier.padding(SumDiarySpacing.lg),
+            verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.xs)
         ) {
             Text(
                 text = title,
@@ -1246,7 +1279,7 @@ private fun SettingsRow(
 
 @Composable
 private fun ScreenSectionHeader(title: String, description: String) {
-    Column(verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.Xs)) {
+    Column(verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.xs)) {
         Text(
             text = title,
             style = MaterialTheme.typography.titleLarge
@@ -1300,7 +1333,7 @@ private fun EntryEditorDialog(
         text = {
             Column(
                 modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.Sm)
+                verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.sm)
             ) {
                 Text(
                     text = if (editing) {
@@ -1349,11 +1382,33 @@ private fun DeleteEntryDialog(
             Text(text = "일기를 삭제할까요?")
         },
         text = {
-            Text(
-                text = "이 작업은 로컬에 저장된 일기를 삭제해요. 백업이 켜져 있다면 다음 백업에서 삭제 상태가 반영될 수 있어요.",
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium
-            )
+            Column(verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.md)) {
+                SumDiaryIllustration(
+                    resourceId = R.drawable.sumdiary_delete_data,
+                    contentDescription = "삭제 경고 일러스트",
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .size(96.dp)
+                )
+                Text(
+                    text = "이 작업은 로컬에 저장된 일기를 삭제해요. 백업이 켜져 있다면 다음 백업에서 삭제 상태가 반영될 수 있어요.",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
         }
+    )
+}
+
+@Composable
+private fun SumDiaryIllustration(
+    resourceId: Int,
+    contentDescription: String?,
+    modifier: Modifier = Modifier
+) {
+    Image(
+        painter = painterResource(id = resourceId),
+        contentDescription = contentDescription,
+        modifier = modifier
     )
 }

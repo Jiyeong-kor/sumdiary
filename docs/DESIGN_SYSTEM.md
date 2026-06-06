@@ -5,20 +5,22 @@
 - 제품명: SumDiary
 - 문서 목적: Android Compose와 iOS SwiftUI UI 구현 전에 공통 브랜드 방향, 디자인 토큰, 컴포넌트 정책, 상태 표현 원칙을 정의한다.
 - 작성일: 2026-06-04
-- 상태: 초안
+- 상태: 디자인 패키지 적용 기준
 - 관련 문서: `docs/APP_IA.md`, `docs/UX_FLOW.md`, `docs/UI_DELIVERY_PLAN.md`
-- 관련 이슈: Refs #11
+- 관련 이슈: Refs #11, Refs #90
+- 적용 패키지: `C:/Users/Jiyeong/Downloads/sumdiary_design_system_package/sumdiary_design_system_package`
 
 ## 2. 디자인 방향
 
-SumDiary는 감성적인 일기장보다 깔끔한 생산성 도구에 가깝게 설계한다.
+SumDiary는 깔끔한 생산성 도구의 밀도 위에 수채화 블루베리 패턴의 부드러운 질감을 얹어 설계한다.
+기록과 요약은 빠르고 정돈되어야 하며, 브랜드 감성은 배경 질감, 작은 일러스트, primary action에서만 드러낸다.
 
 핵심 인상:
 
 - 개인 기록을 빠르게 남기고 요약하는 도구
-- 거의 무채색 기반의 차분한 화면
-- 아주 작은 포인트 컬러로 현재 상태와 주요 액션만 강조
-- 은은한 종이 또는 매트 질감
+- 밝은 paper surface와 블루 primary 중심의 차분한 화면
+- 수채화 블루베리 모티프를 빈 상태와 안내 화면에 제한적으로 사용
+- 은은한 종이 질감과 둥근 outline 컴포넌트
 - 정보가 한눈에 보이는 밀도
 - 짧고 미니멀한 한국어 문장
 
@@ -28,7 +30,8 @@ SumDiary는 감성적인 일기장보다 깔끔한 생산성 도구에 가깝게
 - 사적인
 - 신뢰할 수 있는
 - 빠른
-- 절제된
+- 수채화 질감
+- 차분한 생산성
 
 금지 방향:
 
@@ -41,14 +44,24 @@ SumDiary는 감성적인 일기장보다 깔끔한 생산성 도구에 가깝게
 
 ## 3. 브랜드 상징
 
-SumDiary의 핵심 상징은 `요약 렌즈`와 `정리되는 문장`이다.
+SumDiary의 핵심 상징은 `watercolor berry lens`와 `정리되는 문장`이다.
+브랜드 마크는 블루베리 점 패턴이 렌즈처럼 모여 짧은 기록을 정리하는 이미지를 만든다.
 
 로고와 아이콘 방향:
 
 - 긴 문장이 짧게 정리되는 형태
-- 텍스트 블록 위를 통과하는 렌즈 또는 초점
+- 텍스트 블록 위를 통과하는 블루베리 렌즈 또는 초점
 - 여러 줄이 한 줄의 요약으로 수렴하는 구조
 - 잠금, 방패, 클라우드 같은 직접 상징은 보조 아이콘에서만 사용
+
+패키지 에셋 사용:
+
+- `brand_mark_blueberry_lens.png`: 앱 가이드, 브랜드 보조 표식
+- `empty_diary.png`: 빈 일기 상태
+- `backup_cloud.png`: 백업 설정 상태
+- `delete_data.png`: 삭제 확인
+- `biometric_lock.png`: 앱 잠금
+- `watercolor_berry_pattern_tile.png`, `paper_grain_texture.png`: 배경/문서 시안용 질감
 
 아이콘 금지:
 
@@ -62,8 +75,8 @@ SumDiary의 핵심 상징은 `요약 렌즈`와 `정리되는 문장`이다.
 
 원칙:
 
-- 거의 무채색을 기본으로 한다.
-- 포인트 컬러는 하나만 사용한다.
+- 밝은 paper surface와 블루 primary를 기본으로 한다.
+- 보조 블루는 일러스트, 활성 border, 선택 배경처럼 구조를 보조할 때만 사용한다.
 - 순수 검정 `#000000`은 사용하지 않는다.
 - 개인정보, 삭제, 오류 등 법적/위험 맥락은 브랜드 포인트와 분리한다.
 - 배경에는 아주 약한 종이 질감 또는 매트 질감을 허용한다.
@@ -72,45 +85,49 @@ SumDiary의 핵심 상징은 `요약 렌즈`와 `정리되는 문장`이다.
 
 | Token | Hex | 역할 |
 | --- | --- | --- |
-| `color.background` | `#F7F6F2` | 기본 화면 배경, 은은한 종이색 |
+| `color.background` | `#FAFAFA` | 기본 화면 배경 |
+| `color.backgroundPaper` | `#F7F6F2` | 종이 질감 배경 보조색 |
 | `color.surface` | `#FFFFFF` | 입력 영역, 모달, 주요 패널 |
-| `color.surfaceSubtle` | `#EFEEE8` | 보조 패널, 구분 영역 |
-| `color.surfacePressed` | `#E7E5DD` | 눌림 상태 |
-| `color.textPrimary` | `#1B1B18` | 본문 주요 텍스트 |
-| `color.textSecondary` | `#686862` | 보조 설명, 메타 정보 |
-| `color.textTertiary` | `#929087` | 비활성 설명, placeholder |
-| `color.border` | `#D8D6CD` | 기본 hairline, divider |
-| `color.borderStrong` | `#B9B6AA` | 활성 border, 구조 강조 |
-| `color.accent` | `#4E6757` | 주요 액션, 선택 상태, focus |
-| `color.accentSubtle` | `#DDE7DF` | 선택 배경, 가벼운 강조 |
-| `color.warning` | `#8A5A22` | 백업/복구 주의 |
-| `color.warningSubtle` | `#F1E5D2` | 주의 배경 |
-| `color.danger` | `#A6423A` | 삭제, 위험 액션 |
-| `color.dangerSubtle` | `#F0DAD7` | 위험 배경 |
-| `color.success` | `#3F6B4F` | 저장/백업 성공 |
-| `color.info` | `#4D6473` | 설명, AI 지원 정보 |
+| `color.surfaceSubtle` | `#F5F7FA` | 보조 패널, 구분 영역 |
+| `color.surfacePressed` | `#EEF2FA` | 눌림 상태 |
+| `color.textPrimary` | `#1E1E1E` | 본문 주요 텍스트 |
+| `color.textSecondary` | `#686868` | 보조 설명, 메타 정보 |
+| `color.textTertiary` | `#9A9A9A` | 비활성 설명, placeholder |
+| `color.border` | `#E5E7EB` | 기본 hairline, divider |
+| `color.borderStrong` | `#A9C0F7` | 활성 border, 구조 강조 |
+| `color.accent` | `#4F7CF3` | 주요 액션, 선택 상태, focus |
+| `color.accentSubtle` | `#DDE8FF` | 선택 배경, 가벼운 강조 |
+| `color.secondary` | `#A9C0F7` | 보조 아이콘, 일러스트 강조 |
+| `color.secondarySubtle` | `#EDF3FF` | 보조 강조 배경 |
+| `color.warning` | `#D9A441` | 백업/복구 주의 |
+| `color.warningSubtle` | `#FFF4D6` | 주의 배경 |
+| `color.danger` | `#E64B4B` | 삭제, 위험 액션 |
+| `color.dangerSubtle` | `#FFE4E4` | 위험 배경 |
+| `color.success` | `#4CAF7B` | 저장/백업 성공 |
+| `color.info` | `#4F7CF3` | 설명, AI 지원 정보 |
 
 ### 4.2 다크 모드
 
 | Token | Hex | 역할 |
 | --- | --- | --- |
-| `color.background` | `#151512` | 기본 화면 배경 |
-| `color.surface` | `#20201C` | 입력 영역, 모달, 주요 패널 |
-| `color.surfaceSubtle` | `#2A2924` | 보조 패널, 구분 영역 |
-| `color.surfacePressed` | `#333128` | 눌림 상태 |
-| `color.textPrimary` | `#F0EEE7` | 본문 주요 텍스트 |
-| `color.textSecondary` | `#B9B6AA` | 보조 설명, 메타 정보 |
-| `color.textTertiary` | `#87847A` | 비활성 설명, placeholder |
-| `color.border` | `#3B3931` | 기본 hairline, divider |
-| `color.borderStrong` | `#5B584E` | 활성 border, 구조 강조 |
-| `color.accent` | `#A8C4AF` | 주요 액션, 선택 상태, focus |
-| `color.accentSubtle` | `#2D3B32` | 선택 배경, 가벼운 강조 |
-| `color.warning` | `#D4A45F` | 백업/복구 주의 |
-| `color.warningSubtle` | `#3D2F1D` | 주의 배경 |
-| `color.danger` | `#DF8A82` | 삭제, 위험 액션 |
-| `color.dangerSubtle` | `#422723` | 위험 배경 |
-| `color.success` | `#91C29C` | 저장/백업 성공 |
-| `color.info` | `#9FB7C4` | 설명, AI 지원 정보 |
+| `color.background` | `#111317` | 기본 화면 배경 |
+| `color.surface` | `#1B1D22` | 입력 영역, 모달, 주요 패널 |
+| `color.surfaceSubtle` | `#242832` | 보조 패널, 구분 영역 |
+| `color.surfacePressed` | `#2A2E38` | 눌림 상태 |
+| `color.textPrimary` | `#F4F5F7` | 본문 주요 텍스트 |
+| `color.textSecondary` | `#C4C7CE` | 보조 설명, 메타 정보 |
+| `color.textTertiary` | `#8E929B` | 비활성 설명, placeholder |
+| `color.border` | `#343844` | 기본 hairline, divider |
+| `color.borderStrong` | `#5B668A` | 활성 border, 구조 강조 |
+| `color.accent` | `#9AB5FF` | 주요 액션, 선택 상태, focus |
+| `color.accentSubtle` | `#263A70` | 선택 배경, 가벼운 강조 |
+| `color.secondary` | `#A9C0F7` | 보조 아이콘, 일러스트 강조 |
+| `color.warning` | `#E0B85F` | 백업/복구 주의 |
+| `color.warningSubtle` | `#3D3218` | 주의 배경 |
+| `color.danger` | `#FF8B86` | 삭제, 위험 액션 |
+| `color.dangerSubtle` | `#4A2427` | 위험 배경 |
+| `color.success` | `#80C79F` | 저장/백업 성공 |
+| `color.info` | `#9AB5FF` | 설명, AI 지원 정보 |
 
 ### 4.3 표면 질감
 
@@ -142,8 +159,9 @@ SumDiary의 핵심 상징은 `요약 렌즈`와 `정리되는 문장`이다.
 | Token | Size | Line height | Weight | 용도 |
 | --- | ---: | ---: | ---: | --- |
 | `type.display` | 28 | 36 | 700 | 온보딩 핵심 문장, 빈 상태 대표 문장 |
-| `type.titleLarge` | 22 | 30 | 700 | 화면 제목 |
-| `type.titleMedium` | 18 | 26 | 600 | 섹션 제목, 상세 제목 |
+| `type.headlineLarge` | 24 | 32 | 700 | 주요 화면 제목 |
+| `type.headlineMedium` | 20 | 28 | 700 | 상단 바/강조 섹션 제목 |
+| `type.titleLarge` | 18 | 26 | 600 | 섹션 제목, 상세 제목 |
 | `type.bodyLarge` | 16 | 24 | 400 | 입력 본문, 주요 설명 |
 | `type.bodyMedium` | 14 | 22 | 400 | 리스트 설명, 보조 본문 |
 | `type.labelLarge` | 14 | 20 | 600 | 버튼, 탭 라벨 |
@@ -164,14 +182,14 @@ SumDiary의 핵심 상징은 `요약 렌즈`와 `정리되는 문장`이다.
 | Token | Value | 용도 |
 | --- | ---: | --- |
 | `space.0` | 0 | 붙임 |
-| `space.1` | 4 | 아이콘과 텍스트 간격 |
-| `space.2` | 8 | 작은 내부 간격 |
-| `space.3` | 12 | 행 내부 간격 |
-| `space.4` | 16 | 기본 화면 padding |
-| `space.5` | 20 | 카드/패널 padding |
-| `space.6` | 24 | 섹션 간격 |
-| `space.8` | 32 | 큰 섹션 간격 |
-| `space.10` | 40 | 온보딩 상하 여백 |
+| `space.xxs` | 4 | 작은 indicator, 아이콘과 텍스트 최소 간격 |
+| `space.xs` | 8 | 작은 내부 간격, 리스트 간격 |
+| `space.sm` | 12 | 행 내부 간격, 카드 gap |
+| `space.md` | 16 | 기본 내부 간격 |
+| `space.lg` | 20 | 카드/패널 padding |
+| `space.xl` | 24 | 화면 gutter, 상단 여백 |
+| `space.xxl` | 32 | 큰 섹션 간격 |
+| `space.section` | 40 | 온보딩/주요 섹션 간격 |
 
 화면 밀도:
 
@@ -187,7 +205,10 @@ SumDiary의 핵심 상징은 `요약 렌즈`와 `정리되는 문장`이다.
 | `radius.xs` | 4 | 작은 badge, 내부 indicator |
 | `radius.sm` | 8 | 리스트 행, 입력창 |
 | `radius.md` | 12 | 버튼, 작은 패널 |
-| `radius.lg` | 16 | bottom sheet, dialog |
+| `radius.lg` | 16 | 카드, dialog |
+| `radius.xl` | 20 | 큰 안내 패널 |
+| `radius.xxl` | 24 | 큰 modal surface |
+| `radius.sheet` | 28 | bottom sheet |
 | `radius.full` | 999 | switch thumb, progress pill |
 
 원칙:
