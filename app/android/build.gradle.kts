@@ -85,7 +85,6 @@ dependencies {
     implementation(compose.material3)
     implementation(compose.runtime)
     implementation(libs.androidx.activity.compose)
-    implementation(libs.androidx.biometric)
     implementation(libs.androidx.core.ktx)
     implementation(libs.coroutines.android)
     implementation(libs.datetime)
