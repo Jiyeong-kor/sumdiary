@@ -14,186 +14,186 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 object SumDiaryColors {
-    val LightBackground = Color(0xFFFAFAFA)
-    val LightBackgroundPaper = Color(0xFFF7F6F2)
-    val LightSurface = Color(0xFFFFFFFF)
-    val LightSurfaceSubtle = Color(0xFFF5F7FA)
-    val LightSurfacePressed = Color(0xFFEEF2FA)
-    val LightTextPrimary = Color(0xFF1E1E1E)
-    val LightTextSecondary = Color(0xFF686868)
-    val LightTextTertiary = Color(0xFF9A9A9A)
-    val LightBorder = Color(0xFFE5E7EB)
-    val LightBorderStrong = Color(0xFFA9C0F7)
-    val LightAccent = Color(0xFF4F7CF3)
-    val LightAccentSubtle = Color(0xFFDDE8FF)
-    val LightSecondary = Color(0xFFA9C0F7)
-    val LightSecondarySubtle = Color(0xFFEDF3FF)
-    val LightWarning = Color(0xFFD9A441)
-    val LightWarningSubtle = Color(0xFFFFF4D6)
-    val LightDanger = Color(0xFFE64B4B)
-    val LightDangerSubtle = Color(0xFFFFE4E4)
-    val LightSuccess = Color(0xFF4CAF7B)
-    val LightInfo = Color(0xFF4F7CF3)
+    val lightBackground = Color(0xFFFAFAFA)
+    val lightBackgroundPaper = Color(0xFFF7F6F2)
+    val lightSurface = Color(0xFFFFFFFF)
+    val lightSurfaceSubtle = Color(0xFFF5F7FA)
+    val lightSurfacePressed = Color(0xFFEEF2FA)
+    val lightTextPrimary = Color(0xFF1E1E1E)
+    val lightTextSecondary = Color(0xFF686868)
+    val lightTextTertiary = Color(0xFF9A9A9A)
+    val lightBorder = Color(0xFFE5E7EB)
+    val lightBorderStrong = Color(0xFFA9C0F7)
+    val lightAccent = Color(0xFF4F7CF3)
+    val lightAccentSubtle = Color(0xFFDDE8FF)
+    val lightSecondary = Color(0xFFA9C0F7)
+    val lightSecondarySubtle = Color(0xFFEDF3FF)
+    val lightWarning = Color(0xFFD9A441)
+    val lightWarningSubtle = Color(0xFFFFF4D6)
+    val lightDanger = Color(0xFFE64B4B)
+    val lightDangerSubtle = Color(0xFFFFE4E4)
+    val lightSuccess = Color(0xFF4CAF7B)
+    val lightInfo = Color(0xFF4F7CF3)
 
-    val DarkBackground = Color(0xFF111317)
-    val DarkSurface = Color(0xFF1B1D22)
-    val DarkSurfaceSubtle = Color(0xFF242832)
-    val DarkSurfacePressed = Color(0xFF2A2E38)
-    val DarkTextPrimary = Color(0xFFF4F5F7)
-    val DarkTextSecondary = Color(0xFFC4C7CE)
-    val DarkTextTertiary = Color(0xFF8E929B)
-    val DarkBorder = Color(0xFF343844)
-    val DarkBorderStrong = Color(0xFF5B668A)
-    val DarkAccent = Color(0xFF9AB5FF)
-    val DarkAccentSubtle = Color(0xFF263A70)
-    val DarkSecondary = Color(0xFFA9C0F7)
-    val DarkSecondarySubtle = Color(0xFF273246)
-    val DarkWarning = Color(0xFFE0B85F)
-    val DarkWarningSubtle = Color(0xFF3D3218)
-    val DarkDanger = Color(0xFFFF8B86)
-    val DarkDangerSubtle = Color(0xFF4A2427)
-    val DarkSuccess = Color(0xFF80C79F)
-    val DarkInfo = Color(0xFF9AB5FF)
+    val darkBackground = Color(0xFF111317)
+    val darkSurface = Color(0xFF1B1D22)
+    val darkSurfaceSubtle = Color(0xFF242832)
+    val darkSurfacePressed = Color(0xFF2A2E38)
+    val darkTextPrimary = Color(0xFFF4F5F7)
+    val darkTextSecondary = Color(0xFFC4C7CE)
+    val darkTextTertiary = Color(0xFF8E929B)
+    val darkBorder = Color(0xFF343844)
+    val darkBorderStrong = Color(0xFF5B668A)
+    val darkAccent = Color(0xFF9AB5FF)
+    val darkAccentSubtle = Color(0xFF263A70)
+    val darkSecondary = Color(0xFFA9C0F7)
+    val darkSecondarySubtle = Color(0xFF273246)
+    val darkWarning = Color(0xFFE0B85F)
+    val darkWarningSubtle = Color(0xFF3D3218)
+    val darkDanger = Color(0xFFFF8B86)
+    val darkDangerSubtle = Color(0xFF4A2427)
+    val darkSuccess = Color(0xFF80C79F)
+    val darkInfo = Color(0xFF9AB5FF)
 }
 
 object SumDiarySpacing {
-    val None = 0.dp
-    val Xxs = 4.dp
-    val Xs = 8.dp
-    val Sm = 12.dp
-    val Md = 16.dp
-    val Lg = 20.dp
-    val Xl = 24.dp
-    val Xxl = 32.dp
-    val Section = 40.dp
-    val Onboarding = 40.dp
-    val ScreenGutter = 24.dp
-    val CardGap = 12.dp
-    val ListGap = 8.dp
+    val none = 0.dp
+    val xxs = 4.dp
+    val xs = 8.dp
+    val sm = 12.dp
+    val md = 16.dp
+    val lg = 20.dp
+    val xl = 24.dp
+    val xxl = 32.dp
+    val section = 40.dp
+    val onboarding = 40.dp
+    val screenGutter = 24.dp
+    val cardGap = 12.dp
+    val listGap = 8.dp
 }
 
 object SumDiaryRadii {
-    val Xs = 4.dp
-    val Sm = 8.dp
-    val Md = 12.dp
-    val Lg = 16.dp
-    val Xl = 20.dp
-    val Xxl = 24.dp
-    val Sheet = 28.dp
+    val xs = 4.dp
+    val sm = 8.dp
+    val md = 12.dp
+    val lg = 16.dp
+    val xl = 20.dp
+    val xxl = 24.dp
+    val sheet = 28.dp
 }
 
-private val BaseTypography = Typography()
+private val baseTypography = Typography()
 
-private val SumDiaryTypography = Typography(
-    displayLarge = BaseTypography.displayLarge.copy(
+private val sumDiaryTypography = Typography(
+    displayLarge = baseTypography.displayLarge.copy(
         fontSize = 28.sp,
         lineHeight = 36.sp,
         fontWeight = FontWeight.Bold
     ),
-    displaySmall = BaseTypography.displaySmall.copy(
+    displaySmall = baseTypography.displaySmall.copy(
         fontSize = 28.sp,
         lineHeight = 36.sp,
         fontWeight = FontWeight.Bold
     ),
-    headlineLarge = BaseTypography.headlineLarge.copy(
+    headlineLarge = baseTypography.headlineLarge.copy(
         fontSize = 24.sp,
         lineHeight = 32.sp,
         fontWeight = FontWeight.Bold
     ),
-    headlineMedium = BaseTypography.headlineMedium.copy(
+    headlineMedium = baseTypography.headlineMedium.copy(
         fontSize = 20.sp,
         lineHeight = 28.sp,
         fontWeight = FontWeight.Bold
     ),
-    titleLarge = BaseTypography.titleLarge.copy(
+    titleLarge = baseTypography.titleLarge.copy(
         fontSize = 18.sp,
         lineHeight = 26.sp,
         fontWeight = FontWeight.SemiBold
     ),
-    titleMedium = BaseTypography.titleMedium.copy(
+    titleMedium = baseTypography.titleMedium.copy(
         fontSize = 16.sp,
         lineHeight = 24.sp,
         fontWeight = FontWeight.SemiBold
     ),
-    bodyLarge = BaseTypography.bodyLarge.copy(
+    bodyLarge = baseTypography.bodyLarge.copy(
         fontSize = 16.sp,
         lineHeight = 24.sp,
         fontWeight = FontWeight.Normal
     ),
-    bodyMedium = BaseTypography.bodyMedium.copy(
+    bodyMedium = baseTypography.bodyMedium.copy(
         fontSize = 14.sp,
         lineHeight = 22.sp,
         fontWeight = FontWeight.Normal
     ),
-    labelLarge = BaseTypography.labelLarge.copy(
+    labelLarge = baseTypography.labelLarge.copy(
         fontSize = 14.sp,
         lineHeight = 20.sp,
         fontWeight = FontWeight.SemiBold
     ),
-    labelMedium = BaseTypography.labelMedium.copy(
+    labelMedium = baseTypography.labelMedium.copy(
         fontSize = 12.sp,
         lineHeight = 18.sp,
         fontWeight = FontWeight.Medium
     ),
-    labelSmall = BaseTypography.labelSmall.copy(
+    labelSmall = baseTypography.labelSmall.copy(
         fontSize = 11.sp,
         lineHeight = 16.sp,
         fontWeight = FontWeight.Medium
     )
 )
 
-private val SumDiaryShapes = Shapes(
-    extraSmall = RoundedCornerShape(SumDiaryRadii.Xs),
-    small = RoundedCornerShape(SumDiaryRadii.Sm),
-    medium = RoundedCornerShape(SumDiaryRadii.Md),
-    large = RoundedCornerShape(SumDiaryRadii.Lg),
-    extraLarge = RoundedCornerShape(SumDiaryRadii.Xxl)
+private val sumDiaryShapes = Shapes(
+    extraSmall = RoundedCornerShape(SumDiaryRadii.xs),
+    small = RoundedCornerShape(SumDiaryRadii.sm),
+    medium = RoundedCornerShape(SumDiaryRadii.md),
+    large = RoundedCornerShape(SumDiaryRadii.lg),
+    extraLarge = RoundedCornerShape(SumDiaryRadii.xxl)
 )
 
-private val SumDiaryLightColorScheme = lightColorScheme(
-    primary = SumDiaryColors.LightAccent,
+private val sumDiaryLightColorScheme = lightColorScheme(
+    primary = SumDiaryColors.lightAccent,
     onPrimary = Color.White,
-    primaryContainer = SumDiaryColors.LightAccentSubtle,
-    onPrimaryContainer = SumDiaryColors.LightAccent,
-    secondary = SumDiaryColors.LightSecondary,
-    onSecondary = SumDiaryColors.LightTextPrimary,
-    secondaryContainer = SumDiaryColors.LightSecondarySubtle,
-    onSecondaryContainer = SumDiaryColors.LightTextPrimary,
-    background = SumDiaryColors.LightBackground,
-    onBackground = SumDiaryColors.LightTextPrimary,
-    surface = SumDiaryColors.LightSurface,
-    onSurface = SumDiaryColors.LightTextPrimary,
-    surfaceVariant = SumDiaryColors.LightSurfaceSubtle,
-    onSurfaceVariant = SumDiaryColors.LightTextSecondary,
-    outline = SumDiaryColors.LightBorder,
-    outlineVariant = SumDiaryColors.LightBorderStrong,
-    error = SumDiaryColors.LightDanger,
+    primaryContainer = SumDiaryColors.lightAccentSubtle,
+    onPrimaryContainer = SumDiaryColors.lightAccent,
+    secondary = SumDiaryColors.lightSecondary,
+    onSecondary = SumDiaryColors.lightTextPrimary,
+    secondaryContainer = SumDiaryColors.lightSecondarySubtle,
+    onSecondaryContainer = SumDiaryColors.lightTextPrimary,
+    background = SumDiaryColors.lightBackground,
+    onBackground = SumDiaryColors.lightTextPrimary,
+    surface = SumDiaryColors.lightSurface,
+    onSurface = SumDiaryColors.lightTextPrimary,
+    surfaceVariant = SumDiaryColors.lightSurfaceSubtle,
+    onSurfaceVariant = SumDiaryColors.lightTextSecondary,
+    outline = SumDiaryColors.lightBorder,
+    outlineVariant = SumDiaryColors.lightBorderStrong,
+    error = SumDiaryColors.lightDanger,
     onError = Color.White,
-    errorContainer = SumDiaryColors.LightDangerSubtle,
-    onErrorContainer = SumDiaryColors.LightTextPrimary
+    errorContainer = SumDiaryColors.lightDangerSubtle,
+    onErrorContainer = SumDiaryColors.lightTextPrimary
 )
 
-private val SumDiaryDarkColorScheme = darkColorScheme(
-    primary = SumDiaryColors.DarkAccent,
-    onPrimary = SumDiaryColors.DarkBackground,
-    primaryContainer = SumDiaryColors.DarkAccentSubtle,
-    onPrimaryContainer = SumDiaryColors.DarkTextPrimary,
-    secondary = SumDiaryColors.DarkSecondary,
-    onSecondary = SumDiaryColors.DarkBackground,
-    secondaryContainer = SumDiaryColors.DarkSecondarySubtle,
-    onSecondaryContainer = SumDiaryColors.DarkTextPrimary,
-    background = SumDiaryColors.DarkBackground,
-    onBackground = SumDiaryColors.DarkTextPrimary,
-    surface = SumDiaryColors.DarkSurface,
-    onSurface = SumDiaryColors.DarkTextPrimary,
-    surfaceVariant = SumDiaryColors.DarkSurfaceSubtle,
-    onSurfaceVariant = SumDiaryColors.DarkTextSecondary,
-    outline = SumDiaryColors.DarkBorder,
-    outlineVariant = SumDiaryColors.DarkBorderStrong,
-    error = SumDiaryColors.DarkDanger,
-    onError = SumDiaryColors.DarkBackground,
-    errorContainer = SumDiaryColors.DarkDangerSubtle,
-    onErrorContainer = SumDiaryColors.DarkTextPrimary
+private val sumDiaryDarkColorScheme = darkColorScheme(
+    primary = SumDiaryColors.darkAccent,
+    onPrimary = SumDiaryColors.darkBackground,
+    primaryContainer = SumDiaryColors.darkAccentSubtle,
+    onPrimaryContainer = SumDiaryColors.darkTextPrimary,
+    secondary = SumDiaryColors.darkSecondary,
+    onSecondary = SumDiaryColors.darkBackground,
+    secondaryContainer = SumDiaryColors.darkSecondarySubtle,
+    onSecondaryContainer = SumDiaryColors.darkTextPrimary,
+    background = SumDiaryColors.darkBackground,
+    onBackground = SumDiaryColors.darkTextPrimary,
+    surface = SumDiaryColors.darkSurface,
+    onSurface = SumDiaryColors.darkTextPrimary,
+    surfaceVariant = SumDiaryColors.darkSurfaceSubtle,
+    onSurfaceVariant = SumDiaryColors.darkTextSecondary,
+    outline = SumDiaryColors.darkBorder,
+    outlineVariant = SumDiaryColors.darkBorderStrong,
+    error = SumDiaryColors.darkDanger,
+    onError = SumDiaryColors.darkBackground,
+    errorContainer = SumDiaryColors.darkDangerSubtle,
+    onErrorContainer = SumDiaryColors.darkTextPrimary
 )
 
 @Composable
@@ -202,9 +202,9 @@ fun SumDiaryTheme(
     content: @Composable () -> Unit
 ) {
     MaterialTheme(
-        colorScheme = if (darkTheme) SumDiaryDarkColorScheme else SumDiaryLightColorScheme,
-        typography = SumDiaryTypography,
-        shapes = SumDiaryShapes,
+        colorScheme = if (darkTheme) sumDiaryDarkColorScheme else sumDiaryLightColorScheme,
+        typography = sumDiaryTypography,
+        shapes = sumDiaryShapes,
         content = content
     )
 }
