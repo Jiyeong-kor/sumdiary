@@ -9,6 +9,7 @@
 - 관련 문서: `docs/APP_IA.md`, `docs/UX_FLOW.md`, `docs/UI_DELIVERY_PLAN.md`
 - 관련 이슈: Refs #11, Refs #90
 - 적용 패키지: `C:/Users/Jiyeong/Downloads/sumdiary_design_system_package/sumdiary_design_system_package`
+- 폰트 라이선스: `docs/licenses/PRETENDARD_LICENSE.txt`
 
 ## 2. 디자인 방향
 
@@ -144,9 +145,14 @@ SumDiary의 핵심 상징은 `watercolor berry lens`와 `정리되는 문장`이
 
 권장 폰트:
 
-- Android: `Noto Sans KR`, 시스템 기본 sans fallback
+- Android: `Pretendard`, 시스템 기본 sans fallback
 - iOS: `Apple SD Gothic Neo`, 시스템 기본 sans fallback
-- 디자인 시안: `Pretendard` 또는 `SUIT`
+- 디자인 시안: `Pretendard`
+
+구현 상태:
+
+- Android Compose: `shared:core-designsystem`의 `SumDiaryTheme`가 Pretendard Regular, Medium, SemiBold, Bold를 전역 Typography에 적용한다.
+- iOS SwiftUI: 현재 앱 shell은 SwiftUI 시스템 폰트를 사용한다. iOS 출시 작업 재개 시 Pretendard 번들링 또는 Apple 플랫폼 기본 폰트 유지 여부를 별도로 결정한다.
 
 숫자와 시간:
 
@@ -558,6 +564,7 @@ iOS SwiftUI:
 UI 구현 전 확인:
 
 - 라이트/다크 토큰이 플랫폼별 theme에 반영되었는가
+- Android Typography 전체 role에 Pretendard가 적용되었는가
 - typography scale이 Android/iOS에서 같은 위계를 가지는가
 - 일기, 요약, 설정 탭이 같은 navigation 구조를 가지는가
 - 온보딩 preview가 실제 UI 토큰과 일치하는가
@@ -566,3 +573,12 @@ UI 구현 전 확인:
 - loading/empty/error/unsupported 상태가 각 주요 화면에 있는가
 - 햅틱이 의미 있는 결과에만 적용되었는가
 - 스크린리더와 font scale에서 핵심 흐름이 막히지 않는가
+
+현재 구현 점검에서 남은 보완 항목:
+
+- iOS SwiftUI 앱 shell에는 Pretendard가 아직 적용되어 있지 않다.
+- 날짜, 시간, 카운트에 tabular number 설정이 아직 공통 토큰으로 적용되어 있지 않다.
+- paper grain, watercolor pattern 질감 에셋은 리소스에는 있으나 실제 화면 배경 토큰으로 연결되지 않았다.
+- 햅틱 토큰과 플랫폼별 실행 구현이 아직 없다.
+- 아이콘 토큰 또는 공통 iconography wrapper가 아직 없다.
+- Button, TextField, Dialog 같은 컴포넌트별 wrapper가 아직 없어서 화면 코드가 Material 컴포넌트를 직접 조합한다.
