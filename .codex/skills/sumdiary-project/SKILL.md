@@ -35,6 +35,16 @@ description: SumDiary 프로젝트에서 README, 문서, GitHub 이슈/PR, 빌�
 - Gradle, Kotlin, Compose deprecation warning은 방치하지 않는다.
 - 개인정보, 백업, 온디바이스 AI 관련 warning 또는 lint 성격의 문제는 출시 심사 리스크로 본다.
 
+## Runtime Quality Gate
+
+- Android 앱 동작, Activity, 인증, 권한, DI, 리소스, 앱 시작 경로를 바꾸면 빌드 성공만으로 완료하지 않는다.
+- 연결된 Android 기기가 있으면 debug APK를 설치하고 런처 실행까지 확인한다.
+- 런타임 검증 전에는 `adb logcat -c`로 로그를 비우고, 실행 후 `adb logcat -b crash -d -v time` 또는 앱 패키지 필터로 crash buffer를 확인한다.
+- `AndroidRuntime`, `FATAL EXCEPTION`, `APP_CRASHED`, `SecurityException`, `IllegalStateException`, `ClassNotFoundException`, `NoSuchMethodError`가 나오면 완료로 보지 않는다.
+- 연결 기기가 없거나 오프라인이면 그 사실을 최종 보고에 명확히 쓰고, 런타임 검증을 하지 못한 잔여 리스크로 남긴다.
+- 권한, 생체 인증, 화면 잠금, Google Drive OAuth, 백업/복구처럼 OS 또는 외부 인텐트와 맞물리는 기능은 가능하면 실제 기기에서 성공/실패 fallback 경로를 함께 확인한다.
+- 최종 보고에서 “설치/실행 확인”이라고 말하려면 설치 명령, 런처 실행, crash buffer 확인 여부를 함께 말한다.
+
 ## Dependency Injection
 
 - Android DI는 Hilt를 사용한다.
