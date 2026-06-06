@@ -9,7 +9,10 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -82,60 +85,94 @@ object SumDiaryRadii {
     val sheet = 28.dp
 }
 
+internal expect val sumDiaryFontFamily: FontFamily
+
 private val baseTypography = Typography()
 
+private fun TextStyle.sumDiaryTextStyle(
+    fontSize: TextUnit,
+    lineHeight: TextUnit,
+    fontWeight: FontWeight
+): TextStyle =
+    copy(
+        fontFamily = sumDiaryFontFamily,
+        fontSize = fontSize,
+        lineHeight = lineHeight,
+        fontWeight = fontWeight
+    )
+
 private val sumDiaryTypography = Typography(
-    displayLarge = baseTypography.displayLarge.copy(
+    displayLarge = baseTypography.displayLarge.sumDiaryTextStyle(
         fontSize = 28.sp,
         lineHeight = 36.sp,
         fontWeight = FontWeight.Bold
     ),
-    displaySmall = baseTypography.displaySmall.copy(
+    displayMedium = baseTypography.displayMedium.sumDiaryTextStyle(
         fontSize = 28.sp,
         lineHeight = 36.sp,
         fontWeight = FontWeight.Bold
     ),
-    headlineLarge = baseTypography.headlineLarge.copy(
+    displaySmall = baseTypography.displaySmall.sumDiaryTextStyle(
+        fontSize = 28.sp,
+        lineHeight = 36.sp,
+        fontWeight = FontWeight.Bold
+    ),
+    headlineLarge = baseTypography.headlineLarge.sumDiaryTextStyle(
         fontSize = 24.sp,
         lineHeight = 32.sp,
         fontWeight = FontWeight.Bold
     ),
-    headlineMedium = baseTypography.headlineMedium.copy(
+    headlineMedium = baseTypography.headlineMedium.sumDiaryTextStyle(
         fontSize = 20.sp,
         lineHeight = 28.sp,
         fontWeight = FontWeight.Bold
     ),
-    titleLarge = baseTypography.titleLarge.copy(
+    headlineSmall = baseTypography.headlineSmall.sumDiaryTextStyle(
         fontSize = 18.sp,
         lineHeight = 26.sp,
         fontWeight = FontWeight.SemiBold
     ),
-    titleMedium = baseTypography.titleMedium.copy(
+    titleLarge = baseTypography.titleLarge.sumDiaryTextStyle(
+        fontSize = 18.sp,
+        lineHeight = 26.sp,
+        fontWeight = FontWeight.SemiBold
+    ),
+    titleMedium = baseTypography.titleMedium.sumDiaryTextStyle(
         fontSize = 16.sp,
         lineHeight = 24.sp,
         fontWeight = FontWeight.SemiBold
     ),
-    bodyLarge = baseTypography.bodyLarge.copy(
-        fontSize = 16.sp,
-        lineHeight = 24.sp,
-        fontWeight = FontWeight.Normal
-    ),
-    bodyMedium = baseTypography.bodyMedium.copy(
-        fontSize = 14.sp,
-        lineHeight = 22.sp,
-        fontWeight = FontWeight.Normal
-    ),
-    labelLarge = baseTypography.labelLarge.copy(
+    titleSmall = baseTypography.titleSmall.sumDiaryTextStyle(
         fontSize = 14.sp,
         lineHeight = 20.sp,
         fontWeight = FontWeight.SemiBold
     ),
-    labelMedium = baseTypography.labelMedium.copy(
+    bodyLarge = baseTypography.bodyLarge.sumDiaryTextStyle(
+        fontSize = 16.sp,
+        lineHeight = 24.sp,
+        fontWeight = FontWeight.Normal
+    ),
+    bodyMedium = baseTypography.bodyMedium.sumDiaryTextStyle(
+        fontSize = 14.sp,
+        lineHeight = 22.sp,
+        fontWeight = FontWeight.Normal
+    ),
+    bodySmall = baseTypography.bodySmall.sumDiaryTextStyle(
+        fontSize = 12.sp,
+        lineHeight = 18.sp,
+        fontWeight = FontWeight.Normal
+    ),
+    labelLarge = baseTypography.labelLarge.sumDiaryTextStyle(
+        fontSize = 14.sp,
+        lineHeight = 20.sp,
+        fontWeight = FontWeight.SemiBold
+    ),
+    labelMedium = baseTypography.labelMedium.sumDiaryTextStyle(
         fontSize = 12.sp,
         lineHeight = 18.sp,
         fontWeight = FontWeight.Medium
     ),
-    labelSmall = baseTypography.labelSmall.copy(
+    labelSmall = baseTypography.labelSmall.sumDiaryTextStyle(
         fontSize = 11.sp,
         lineHeight = 16.sp,
         fontWeight = FontWeight.Medium
