@@ -9,7 +9,7 @@ class SummaryDisplayMessageTest {
     fun unsupportedMessageExplainsDeviceAndOsConditions() {
         val message = SummaryUiStatus.UNSUPPORTED.displayMessage
 
-        assertEquals("미지원", message.label)
+        assertEquals("지원 안 됨", message.label)
         assertEquals("이 기기에서는 아직 요약을 만들 수 없어요", message.title)
         assertTrue(message.description.contains("지원 기기"))
         assertTrue(message.description.contains("OS 조건"))
@@ -27,6 +27,6 @@ class SummaryDisplayMessageTest {
     fun nonContentBodyTextFallsBackToStatusTitle() {
         val message = SummaryUiStatus.FAILED.displayMessage
 
-        assertEquals("요약을 만들지 못했어요", message.bodyText(""))
+        assertEquals("요약이 일시적으로 중단됐어요", message.bodyText(""))
     }
 }

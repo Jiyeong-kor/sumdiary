@@ -44,8 +44,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
@@ -227,7 +230,7 @@ fun SumDiaryScreen(
                             container.setAppLockEnabled(true)
                             appLockEnabled = true
                             appUnlocked = true
-                            appLockMessage = "앱 잠금을 켰어요."
+                            appLockMessage = appLockEnabledMessage(appLockAvailability)
                         } else {
                             appLockMessage = message ?: "인증하지 못했어요. 다시 시도해 주세요."
                         }
@@ -242,6 +245,7 @@ fun SumDiaryScreen(
             text = entryState.text,
             editing = entryState.editingEntryId != null,
             saving = entryState.saving,
+            quickMode = entryState.editingEntryId == null,
             onTextChange = { entryViewModel.dispatch(EntryIntent.EditText(it)) },
             onDismiss = {
                 entryViewModel.dispatch(EntryIntent.CancelEdit)
@@ -1080,6 +1084,15 @@ private fun appLockDescription(
         else -> "사용 불가 · 기기 설정에서 화면 잠금을 먼저 등록해 주세요."
     }
 
+private fun appLockEnabledMessage(availability: AppLockAuthAvailability): String =
+    when (availability) {
+        AppLockAuthAvailability.Biometric ->
+            "앱 잠금을 켰어요. 다음에 앱을 열 때 지문/얼굴 또는 화면 잠금으로 확인해요."
+        AppLockAuthAvailability.DeviceCredential ->
+            "앱 잠금을 켰어요. 다음에 앱을 열 때 화면 잠금으로 확인해요."
+        AppLockAuthAvailability.Unavailable -> "이 기기에는 아직 사용할 수 있는 화면 잠금이 없어요."
+    }
+
 @Composable
 private fun BackupSettingsPanel(
     state: BackupState,
@@ -1094,8 +1107,11 @@ private fun BackupSettingsPanel(
     ) {
         Column(
             modifier = Modifier.padding(SumDiarySpacing.lg),
-            verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.sm)
+            verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.md)
         ) {
+            val backupActionState = remember(state.status, state.connected, state.lastResult) {
+                backupActionState(state)
+            }
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -1131,21 +1147,11 @@ private fun BackupSettingsPanel(
             }
 
             Text(
-                text = state.statusDescription,
+                text = backupActionState.description,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyMedium
             )
-            Text(
-                text = "Google Drive에는 암호화된 SumDiary 백업 파일만 저장돼요.\n일기 원문은 그대로 업로드되지 않아요.\n백업 비밀번호를 잃어버리면 복구할 수 없어요.",
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodySmall
-            )
-            Text(
-                text = state.accountRemovalNotice,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodySmall
-            )
-            state.lastResult?.let {
+            backupActionState.detail?.let {
                 Text(
                     text = it,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -1154,27 +1160,121 @@ private fun BackupSettingsPanel(
                     overflow = TextOverflow.Ellipsis
                 )
             }
+            Text(
+                text = "암호화된 백업 파일만 저장돼요. 비밀번호를 잃어버리면 복구할 수 없어요.",
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodySmall
+            )
             if (state.busy) {
                 LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
             }
-            Row(
+            BackupActionButtons(
+                state = backupActionState,
+                busy = state.busy,
+                onIntent = onIntent,
+                onRequestPassphrase = onRequestPassphrase
+            )
+        }
+    }
+}
+
+private enum class BackupActionKind {
+    Connect,
+    FirstBackup,
+    ManageBackup,
+    CheckConnection,
+    Running
+}
+
+private data class BackupActionState(
+    val kind: BackupActionKind,
+    val description: String,
+    val detail: String?
+)
+
+private fun backupActionState(state: BackupState): BackupActionState {
+    val lastBackupFileName = state.lastBackupFileName()
+    return when {
+        state.busy -> BackupActionState(
+            kind = BackupActionKind.Running,
+            description = state.statusDescription,
+            detail = null
+        )
+        !state.connected ||
+            state.status == BackupUiStatus.NotConnected ||
+            state.status == BackupUiStatus.NeedsConnection -> BackupActionState(
+                kind = BackupActionKind.Connect,
+                description = "백업은 꺼져 있어요. 사용자가 Google Drive 연결을 시작해야 동작해요.",
+                detail = null
+            )
+        state.status == BackupUiStatus.Ready -> BackupActionState(
+            kind = BackupActionKind.FirstBackup,
+            description = "Google Drive가 연결됐어요. 아직 만든 백업은 없어요.",
+            detail = null
+        )
+        state.status == BackupUiStatus.Success && lastBackupFileName != null -> BackupActionState(
+            kind = BackupActionKind.ManageBackup,
+            description = "마지막 백업 파일을 확인했어요.",
+            detail = "마지막 백업: $lastBackupFileName"
+        )
+        else -> BackupActionState(
+            kind = BackupActionKind.CheckConnection,
+            description = state.statusDescription,
+            detail = state.lastResult
+        )
+    }
+}
+
+private fun BackupState.lastBackupFileName(): String? =
+    lastResult?.takeIf { result ->
+        result.contains("sumdiary-backup", ignoreCase = true) ||
+            result.endsWith(".sdb", ignoreCase = true) ||
+            result.endsWith(".sdbak", ignoreCase = true) ||
+            result.endsWith(".json", ignoreCase = true)
+    }
+
+@Composable
+private fun BackupActionButtons(
+    state: BackupActionState,
+    busy: Boolean,
+    onIntent: (BackupIntent) -> Unit,
+    onRequestPassphrase: (BackupPassphraseAction) -> Unit
+) {
+    when (state.kind) {
+        BackupActionKind.Connect -> Button(
+            modifier = Modifier.fillMaxWidth(),
+            enabled = !busy,
+            onClick = { onIntent(BackupIntent.ConnectGoogleDrive) }
+        ) {
+            Text(text = "Google Drive 연결하기")
+        }
+        BackupActionKind.FirstBackup -> Column(
+            verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.xs)
+        ) {
+            Button(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(SumDiarySpacing.sm)
+                enabled = !busy,
+                onClick = { onRequestPassphrase(BackupPassphraseAction.Backup) }
             ) {
-                Button(
-                    modifier = Modifier.weight(1f),
-                    enabled = !state.busy,
-                    onClick = { onIntent(BackupIntent.ConnectGoogleDrive) }
-                ) {
-                    Text(text = if (state.connected) "연결 확인" else "연결")
-                }
-                Button(
-                    modifier = Modifier.weight(1f),
-                    enabled = !state.busy,
-                    onClick = { onRequestPassphrase(BackupPassphraseAction.Backup) }
-                ) {
-                    Text(text = "백업")
-                }
+                Text(text = "첫 백업 만들기")
+            }
+            TextButton(
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !busy,
+                onClick = { onIntent(BackupIntent.ConnectGoogleDrive) }
+            ) {
+                Text(text = "연결 다시 확인")
+            }
+        }
+        BackupActionKind.ManageBackup -> Column(
+            verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.xs)
+        ) {
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !busy,
+                onClick = { onRequestPassphrase(BackupPassphraseAction.Restore) }
+            ) {
+                Text(text = "복구하기")
             }
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -1182,20 +1282,40 @@ private fun BackupSettingsPanel(
             ) {
                 TextButton(
                     modifier = Modifier.weight(1f),
-                    enabled = !state.busy,
-                    onClick = { onRequestPassphrase(BackupPassphraseAction.Restore) }
+                    enabled = !busy,
+                    onClick = { onRequestPassphrase(BackupPassphraseAction.Backup) }
                 ) {
-                    Text(text = "복구")
+                    Text(text = "새 백업")
                 }
                 TextButton(
                     modifier = Modifier.weight(1f),
-                    enabled = !state.busy,
+                    enabled = !busy,
                     onClick = { onIntent(BackupIntent.DeleteRemoteBackup) }
                 ) {
-                    Text(text = "백업 삭제")
+                    Text(text = "삭제")
                 }
             }
         }
+        BackupActionKind.CheckConnection -> Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(SumDiarySpacing.sm)
+        ) {
+            Button(
+                modifier = Modifier.weight(1f),
+                enabled = !busy,
+                onClick = { onIntent(BackupIntent.ConnectGoogleDrive) }
+            ) {
+                Text(text = "연결 확인")
+            }
+            TextButton(
+                modifier = Modifier.weight(1f),
+                enabled = !busy,
+                onClick = { onRequestPassphrase(BackupPassphraseAction.Backup) }
+            ) {
+                Text(text = "백업")
+            }
+        }
+        BackupActionKind.Running -> Unit
     }
 }
 
@@ -1346,11 +1466,21 @@ private fun EntryEditorDialog(
     text: String,
     editing: Boolean,
     saving: Boolean,
+    quickMode: Boolean,
     onTextChange: (String) -> Unit,
     onDismiss: () -> Unit,
     onSave: () -> Unit,
     onDelete: () -> Unit
 ) {
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(quickMode) {
+        if (quickMode) {
+            withFrameNanos { }
+            focusRequester.requestFocus()
+        }
+    }
+
     AlertDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
@@ -1377,7 +1507,7 @@ private fun EntryEditorDialog(
             }
         },
         title = {
-            Text(text = if (editing) "일기 수정" else "새 일기")
+            Text(text = if (editing) "일기 수정" else "짧게 남기기")
         },
         text = {
             Column(
@@ -1385,11 +1515,7 @@ private fun EntryEditorDialog(
                 verticalArrangement = Arrangement.spacedBy(SumDiarySpacing.sm)
             ) {
                 Text(
-                    text = if (editing) {
-                        "수정 중 뒤로 가면 변경사항은 저장되지 않아요."
-                    } else {
-                        "오늘 기억할 문장만 짧게 남겨도 좋아요."
-                    },
+                    text = entryEditorDescription(editing, quickMode),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium
                 )
@@ -1398,14 +1524,25 @@ private fun EntryEditorDialog(
                     onValueChange = onTextChange,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .heightIn(min = 144.dp),
-                    placeholder = { Text(text = "오늘 있었던 일") },
+                        .focusRequester(focusRequester)
+                        .heightIn(min = if (quickMode) 56.dp else 144.dp),
+                    placeholder = {
+                        Text(text = if (quickMode) "한 문장으로 남기기" else "오늘 있었던 일")
+                    },
+                    singleLine = quickMode,
                     textStyle = MaterialTheme.typography.bodyLarge
                 )
             }
         }
     )
 }
+
+private fun entryEditorDescription(editing: Boolean, quickMode: Boolean): String =
+    when {
+        editing -> "수정 중 뒤로 가면 변경사항은 저장되지 않아요."
+        quickMode -> "한 문장만 적어도 바로 저장할 수 있어요."
+        else -> "오늘 기억할 문장만 짧게 남겨도 좋아요."
+    }
 
 @Composable
 private fun DeleteEntryDialog(
