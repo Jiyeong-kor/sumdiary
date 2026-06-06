@@ -14,6 +14,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import com.jeong.sumdiary.android.backup.AndroidGoogleDriveAccessTokenProvider
 import com.jeong.sumdiary.android.di.AppContainer
+import com.jeong.sumdiary.android.ui.AppLockAuthAvailability
 import com.jeong.sumdiary.android.ui.SumDiaryScreen
 import com.jeong.sumdiary.core.designsystem.SumDiaryTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -55,7 +56,7 @@ class MainActivity : ComponentActivity() {
             SumDiaryTheme {
                 SumDiaryScreen(
                     container = container,
-                    appLockAvailable = isAppLockAvailable(),
+                    appLockAvailability = appLockAuthAvailability(),
                     onRequestAppUnlock = ::requestAppUnlock
                 )
             }
@@ -69,11 +70,18 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun isAppLockAvailable(): Boolean =
-        isBiometricAuthenticationAvailable() || isDeviceCredentialAvailable()
+        appLockAuthAvailability() != AppLockAuthAvailability.Unavailable
+
+    private fun appLockAuthAvailability(): AppLockAuthAvailability =
+        when {
+            isBiometricAuthenticationAvailable() -> AppLockAuthAvailability.Biometric
+            isDeviceCredentialAvailable() -> AppLockAuthAvailability.DeviceCredential
+            else -> AppLockAuthAvailability.Unavailable
+        }
 
     private fun requestAppUnlock(onResult: (success: Boolean, message: String?) -> Unit) {
         if (!isAppLockAvailable()) {
-            onResult(false, "이 기기에는 사용할 수 있는 생체 또는 화면 잠금 인증이 없어요.")
+            onResult(false, "이 기기에는 아직 사용할 수 있는 화면 잠금이 없어요.")
             return
         }
 
@@ -136,7 +144,7 @@ class MainActivity : ComponentActivity() {
     private fun createBiometricPrompt(): BiometricPrompt {
         val builder = BiometricPrompt.Builder(this)
             .setTitle("SumDiary 잠금 해제")
-            .setSubtitle("일기와 백업 설정을 보려면 OS 인증이 필요해요.")
+            .setSubtitle("기기에 등록된 지문/얼굴 또는 화면 잠금으로 열어요.")
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             builder.setAllowedAuthenticators(
@@ -155,10 +163,10 @@ class MainActivity : ComponentActivity() {
     private fun requestDeviceCredentialUnlock(onResult: (success: Boolean, message: String?) -> Unit) {
         val intent = keyguardManager.createConfirmDeviceCredentialIntent(
             "SumDiary 잠금 해제",
-            "일기와 백업 설정을 보려면 OS 인증이 필요해요."
+            "이 기기에서는 화면 잠금으로만 열 수 있어요."
         )
         if (intent == null) {
-            onResult(false, "이 기기에는 사용할 수 있는 생체 또는 화면 잠금 인증이 없어요.")
+            onResult(false, "이 기기에는 아직 사용할 수 있는 화면 잠금이 없어요.")
             return
         }
 
