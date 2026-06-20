@@ -4,7 +4,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 
-fun LocalDate.displayText(): String = "${year.pad(4)}-${month.number.pad()}-${day.pad()}"
+fun LocalDate.displayText(): String = "${year.pad(4)}-${monthNumber.pad()}-${day.pad()}"
 
 fun LocalTime.displayText(): String = "${hour.pad()}:${minute.pad()}"
 
