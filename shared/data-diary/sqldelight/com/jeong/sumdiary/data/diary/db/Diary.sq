@@ -6,12 +6,8 @@ CREATE TABLE Diary (
 );
 
 upsertDiary:
-INSERT INTO Diary(id, date, time, content)
-VALUES (:id, :date, :time, :content)
-ON CONFLICT(id) DO UPDATE SET
-    date = excluded.date,
-    time = excluded.time,
-    content = excluded.content;
+INSERT OR REPLACE INTO Diary(id, date, time, content)
+VALUES (:id, :date, :time, :content);
 
 selectByDate:
 SELECT id, date, time, content FROM Diary
