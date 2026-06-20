@@ -2,7 +2,7 @@ import SwiftUI
 import SumDiary
 
 struct ContentView: View {
-    private let controller = IosSampleController()
+    private let controller = IosSampleController(factory: IosAppFactory())
     @State private var status = "SumDiary iOS"
     @State private var summary = "샘플 일기를 저장하면 KMP 공유 모듈이 요약을 만듭니다."
 
