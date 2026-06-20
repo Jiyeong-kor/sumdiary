@@ -1,7 +1,7 @@
 package com.jeong.sumdiary.data.summary
 
-import com.jeong.sumdiary.data.summary.db.SelectSummary
 import com.jeong.sumdiary.data.summary.db.SummaryDatabase
+import com.jeong.sumdiary.data.summary.db.Summary as SummaryRow
 import com.jeong.sumdiary.domain.diary.DiaryEntry
 import com.jeong.sumdiary.domain.summary.Summary
 import com.jeong.sumdiary.domain.summary.SummaryRepository
@@ -77,7 +77,7 @@ class SummaryRepositoryImpl(
         return emotions
     }
 
-    private fun SelectSummary.toSummary(): Summary = Summary(
+    private fun SummaryRow.toSummary(): Summary = Summary(
         type = SummaryType.valueOf(type),
         periodStart = LocalDate.parse(periodStart),
         periodEnd = LocalDate.parse(periodEnd),
