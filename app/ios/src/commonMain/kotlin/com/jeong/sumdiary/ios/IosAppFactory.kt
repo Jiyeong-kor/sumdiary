@@ -1,5 +1,7 @@
 package com.jeong.sumdiary.ios
 
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 import app.cash.sqldelight.driver.native.NativeSqliteDriver
 import com.jeong.sumdiary.core.util.DefaultDispatchersProvider
 import com.jeong.sumdiary.data.diary.DiaryRepositoryImpl
@@ -8,11 +10,11 @@ import com.jeong.sumdiary.data.summary.PlaceholderSummarizerEngine
 import com.jeong.sumdiary.data.summary.SummaryRepositoryImpl
 import com.jeong.sumdiary.data.summary.db.SummaryDatabase
 import com.jeong.sumdiary.domain.summary.usecase.GenerateDailySummary
+import com.jeong.sumdiary.domain.summary.usecase.GenerateWeeklySummary
 import com.jeong.sumdiary.feature.entry.EntryIntent
 import com.jeong.sumdiary.feature.entry.EntryViewModel
 import com.jeong.sumdiary.feature.summary.SummaryIntent
 import com.jeong.sumdiary.feature.summary.SummaryViewModel
-import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
@@ -51,6 +53,7 @@ class IosSampleController(factory: IosAppFactory = IosAppFactory()) {
     private val summaryViewModel = factory.createSummaryViewModel()
     private val entryViewModel = factory.createEntryViewModel()
 
+    @OptIn(ExperimentalTime::class)
     fun loadTodaySummary() {
         val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
         summaryViewModel.dispatch(SummaryIntent.LoadDaily(today))
