@@ -15,6 +15,12 @@ captures/
 DerivedData/
 *.xcworkspace/
 *.xcodeproj/
+!iosApp/
+!iosApp/SumDiaryIOS.xcodeproj/
+!iosApp/SumDiaryIOS.xcodeproj/project.pbxproj
+!iosApp/SumDiaryIOS.xcodeproj/xcshareddata/
+!iosApp/SumDiaryIOS.xcodeproj/xcshareddata/xcschemes/
+!iosApp/SumDiaryIOS.xcodeproj/xcshareddata/xcschemes/SumDiary.xcscheme
 *.xcuserdata/
 # Kotlin/Native
 .korge/

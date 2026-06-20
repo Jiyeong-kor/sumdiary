@@ -1,0 +1,55 @@
+name: iOS IPA Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  build-ios-ipa:
+    runs-on: macos-15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Build KMP iOS framework
+        run: |
+          chmod +x ./gradlew
+          ./gradlew :app:ios:linkDebugFrameworkIosArm64 --warning-mode=all
+
+      - name: Build unsigned iOS app
+        run: |
+          xcodebuild \
+            -project iosApp/SumDiaryIOS.xcodeproj \
+            -scheme SumDiary \
+            -configuration Debug \
+            -sdk iphoneos \
+            -derivedDataPath build/ios-derived \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            build
+
+      - name: Package unsigned IPA
+        run: |
+          APP_PATH="build/ios-derived/Build/Products/Debug-iphoneos/SumDiary.app"
+          mkdir -p build/ios-ipa/Payload
+          cp -R "$APP_PATH" build/ios-ipa/Payload/
+          cd build/ios-ipa
+          zip -qry ../SumDiary-unsigned.ipa Payload
+
+      - name: Upload unsigned IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: sumdiary-unsigned-ipa
+          path: build/SumDiary-unsigned.ipa
+          retention-days: 1
