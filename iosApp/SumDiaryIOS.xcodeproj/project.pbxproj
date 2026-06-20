@@ -203,6 +203,7 @@
 					"-lsqlite3",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.jeong.sumdiary.dev;
+				PRODUCT_MODULE_NAME = SumDiaryIOS;
 				PRODUCT_NAME = SumDiary;
 				SUPPORTED_PLATFORMS = iphoneos;
 				SWIFT_VERSION = 5.0;
@@ -239,6 +240,7 @@
 					"-lsqlite3",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.jeong.sumdiary.dev;
+				PRODUCT_MODULE_NAME = SumDiaryIOS;
 				PRODUCT_NAME = SumDiary;
 				SUPPORTED_PLATFORMS = iphoneos;
 				SWIFT_VERSION = 5.0;
