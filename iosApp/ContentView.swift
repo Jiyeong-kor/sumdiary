@@ -3,37 +3,139 @@ import SumDiary
 
 struct ContentView: View {
     private let controller = IosSampleController(factory: IosAppFactory())
-    @State private var status = "SumDiary iOS"
-    @State private var summary = "샘플 일기를 저장하면 KMP 공유 모듈이 요약을 만듭니다."
+
+    @State private var selectedTab = 0
+    @State private var showEntryEditor = false
+    @State private var entryText = ""
+    @State private var summaryText = "요약을 불러와 주세요."
+    @State private var summaryStatus = "기간: 오늘"
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
-            Text(status)
-                .font(.largeTitle.bold())
+        NavigationStack {
+            ZStack(alignment: .bottomTrailing) {
+                VStack(spacing: 0) {
+                    Picker("탭", selection: $selectedTab) {
+                        Text("일기").tag(0)
+                        Text("요약").tag(1)
+                    }
+                    .pickerStyle(.segmented)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
 
-            Text(summary)
-                .font(.body)
+                    if selectedTab == 0 {
+                        diaryView
+                    } else {
+                        summaryView
+                    }
+                }
+
+                if selectedTab == 0 {
+                    Button {
+                        showEntryEditor = true
+                    } label: {
+                        Image(systemName: "plus")
+                            .font(.title2.weight(.semibold))
+                            .frame(width: 56, height: 56)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .clipShape(Circle())
+                    .padding(20)
+                }
+            }
+            .navigationTitle("SumDiary")
+            .sheet(isPresented: $showEntryEditor) {
+                entryEditor
+            }
+            .onChange(of: selectedTab) { _, newValue in
+                if newValue == 1 {
+                    Task { await loadDailySummary() }
+                }
+            }
+        }
+    }
+
+    private var diaryView: some View {
+        List {
+            Text("오늘의 샘플 일기")
+            Text("AI 요약을 확인해보세요")
+        }
+        .listStyle(.plain)
+    }
+
+    private var summaryView: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(summaryStatus)
+            Text(summaryText)
                 .frame(maxWidth: .infinity, alignment: .leading)
+            Text("감정 태그: neutral")
 
-            Button("샘플 일기 저장하고 요약") {
-                Task { await createSampleSummary() }
+            Button("오늘 요약") {
+                Task { await loadDailySummary() }
             }
             .buttonStyle(.borderedProminent)
+
+            Button("이번 주 요약") {
+                Task { await loadWeeklySummary() }
+            }
+            .buttonStyle(.bordered)
+
+            Spacer()
         }
-        .padding(24)
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private var entryEditor: some View {
+        NavigationStack {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("새 일기")
+                    .font(.headline)
+                TextEditor(text: $entryText)
+                    .frame(minHeight: 180)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.secondary.opacity(0.25))
+                    )
+                Spacer()
+            }
+            .padding(16)
+            .navigationTitle("새 일기")
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("취소") {
+                        showEntryEditor = false
+                    }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("저장") {
+                        saveEntry()
+                    }
+                }
+            }
+        }
+    }
+
+    private func saveEntry() {
+        let text = entryText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !text.isEmpty else { return }
+        controller.createSampleEntry(text: text)
+        entryText = ""
+        showEntryEditor = false
     }
 
     @MainActor
-    private func createSampleSummary() async {
-        status = "저장 중"
-        controller.createSampleEntry(text: "오늘은 Windows에서 만든 IPA를 iPhone에 설치하는 날입니다.")
-        try? await Task.sleep(nanoseconds: 500_000_000)
-
-        status = "요약 중"
+    private func loadDailySummary() async {
+        summaryStatus = "기간: 오늘"
         controller.loadTodaySummary()
         try? await Task.sleep(nanoseconds: 500_000_000)
+        summaryText = controller.currentSummaryText()
+    }
 
-        summary = controller.currentSummaryText()
-        status = "완료"
+    @MainActor
+    private func loadWeeklySummary() async {
+        summaryStatus = "기간: 이번 주"
+        controller.loadTodaySummary()
+        try? await Task.sleep(nanoseconds: 500_000_000)
+        summaryText = controller.currentSummaryText()
     }
 }
